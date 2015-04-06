@@ -1,0 +1,77 @@
+body{
+	background-color: rgb(170,170,170);
+	background-image: url('./swag/bgtexture.png');
+}
+#page{
+	position: relative;
+	top: 0px;
+	left: 50%;
+
+	width: 1000px;
+	margin-left: -500px;
+
+	text-align: center;
+	background-color: rgb(255,255,255);
+	box-shadow: 0px 0px 10px;
+
+	padding-top: 25px;
+}
+#map-canvas{
+	height: 600px;
+	width: 800px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 25px;
+}
+#slider{
+	width: 500px;
+}
+#familyTree{
+	position: relative;
+	left: 0px;
+	height: 1000px;
+	width: 100%;
+	overflow-x: hidden;
+
+	box-shadow: 0px 0px 10px inset;
+}
+#children{
+	position: absolute;
+	top: 50%;
+	left: 0px;
+	width: 200px;
+}
+#mem-info{
+	position: fixed;
+	top: 0px;
+	left: 50%;
+	margin-left: 550px;
+}
+.member{
+	position: absolute;
+	left: 50%;
+	text-align: center;
+	width: 250px;
+	height: 50%;
+	margin: auto;
+}
+.upper{
+	top: 0px;
+}
+.lower{
+	top: 50%;
+}
+.first{
+	height: 1000px;
+	left: 200px;
+}
+.child{
+	color: rgb(180,180,180);
+}
+.name{
+	position: absolute;
+	top:50%;
+}
+.name:hover, .child:hover{
+	font-weight: bold;
+}
