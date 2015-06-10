@@ -19,7 +19,8 @@
   },
 
   "dependencies": {
-    "express": ">=4.8.0"
+    "express": ">=4.8.0",
+    "pg": "~4.3.0"
   },
   "devDependencies": {},
   "bundleDependencies": [],
