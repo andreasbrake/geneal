@@ -14,10 +14,6 @@ namespace Geneal
         [STAThread]
         static void Main()
         {
-            new Preferences();
-            new FamilyMembers();
-            new FamilyStats();
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new AppMain());

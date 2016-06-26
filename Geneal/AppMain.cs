@@ -17,20 +17,41 @@ namespace Geneal
 {
     public partial class AppMain : Form
     {
+        private Maps _mapData;
+        private FamilyMembers _family;
+        private FamilyStats _stats;
+
         string currentMember = Preferences.RootUser;
 
         public AppMain()
         {
+            InitObjects();
+
             InitializeComponent();
 
+            this.InitFromData();
+        }
+
+        private void InitObjects()
+        {
+            Preferences.Init();
+            _mapData = new Maps();
+            _family = new FamilyMembers(Preferences.DataSourceFile, _mapData);
+            _stats = new FamilyStats(_family);
+
+            this.currentMember = Preferences.RootUser;
+        }
+
+        private void InitFromData()
+        {
             createTree(Preferences.RootUser);
 
             this.treePanel.Width = (int)Math.Round(this.Width * 0.75f - (this.treePanel.VerticalScroll.Visible ? 25 : 0) - 25);
             this.infoPanel.Width = (int)Math.Round(this.Width * 0.25f);
 
             createStats();
-            
-            Dictionary<string, double> history = FamilyStats.getHistoricalLocations(FamilyMembers.getMember(Preferences.RootUser), FamilyMembers.Family.maxDepth);
+
+            Dictionary<string, double> history = _stats.getHistoricalLocations(_family.getMember(Preferences.RootUser), _family.Family.maxDepth);
 
             setListData();
 
@@ -38,9 +59,9 @@ namespace Geneal
             setListData();
 
             // Slider
-            yearRange.Minimum = FamilyMembers.getFirstBirthYear();
+            yearRange.Minimum = _family.getFirstBirthYear();
             yearRange.Maximum = DateTime.Now.Year;
-            lblCurrentYear.Text = "" + FamilyMembers.getFirstBirthYear();
+            lblCurrentYear.Text = "" + _family.getFirstBirthYear();
             yearRange.BringToFront();
 
             // Map Stuff
@@ -53,7 +74,7 @@ namespace Geneal
             gMap.Overlays.Add(markersOverlay);
             gMap.OnMarkerClick += new MarkerClick(this.gMap_MarkerClick);
 
-            Maps.setMarkers(markersOverlay, yearRange.Minimum);
+            _mapData.setMarkers(_family, markersOverlay, yearRange.Minimum);
         }
 
         private void setListData()
@@ -87,7 +108,7 @@ namespace Geneal
             }
 
             searchResults.Items.AddRange(
-                FamilyMembers.Family.getAlphabeticalLike(
+                _family.Family.getAlphabeticalLike(
                     name1,
                     name2,
                     birthYear1,
@@ -102,26 +123,68 @@ namespace Geneal
 
         private void createStats()
         {
-            var nameOccurenceSeries = new Series { Name = "Occurance", Color = System.Drawing.Color.Blue, ChartType = SeriesChartType.Column, XValueType = ChartValueType.String };
-            var countryOccurenceSeries = new Series { Name = "Occurance", Color = System.Drawing.Color.Blue, ChartType = SeriesChartType.Column, XValueType = ChartValueType.String };
+            //new FamilyStats();
+            this.occuranceChart.Series.Clear();
+            this.countryOccuranceChart.Series.Clear();
+            this.memberOccuranceChart.Series.Clear();
+            this.generationalCompletenessChart.Series.Clear();
+            this.generationUniqueCount.Series.Clear();
+            this.generationUniqueCount.Series.Clear();
+
+            Series nameOccurenceSeries = new Series { Name = "Occurance", Color = System.Drawing.Color.Blue, ChartType = SeriesChartType.Column, XValueType = ChartValueType.String, ToolTip = "#VALY" };
+            Series countryOccurenceSeries = new Series { Name = "Occurance", Color = System.Drawing.Color.Blue, ChartType = SeriesChartType.Column, XValueType = ChartValueType.String, ToolTip = "#VALY" };
+            Series memberOccuranceSeries = new Series { Name = "Occurance", Color = System.Drawing.Color.Blue, ChartType = SeriesChartType.Column, XValueType = ChartValueType.String, ToolTip = "#VALY" };
+            Series generationalCompletenessSeries = new Series { Name = "Occurance", Color = System.Drawing.Color.Blue, ChartType = SeriesChartType.Column, XValueType = ChartValueType.Int32, ToolTip = "#VALY" };
+            Series generationalUniqueCount = new Series { Name = "Occurance", Color = System.Drawing.Color.Blue, ChartType = SeriesChartType.Column, XValueType = ChartValueType.Int32, ToolTip = "#VALY" };
+            Series generationalTotalCount = new Series { Name = "Occurance2", Color = System.Drawing.Color.Green, ChartType = SeriesChartType.Line, XValueType = ChartValueType.Int32, ToolTip = "#VALY" };
 
             this.occuranceChart.Series.Add(nameOccurenceSeries);
             this.countryOccuranceChart.Series.Add(countryOccurenceSeries);
+            this.memberOccuranceChart.Series.Add(memberOccuranceSeries);
+            this.generationalCompletenessChart.Series.Add(generationalCompletenessSeries);
+            this.generationUniqueCount.Series.Add(generationalUniqueCount);
+            this.generationUniqueCount.Series.Add(generationalTotalCount);
 
-            Dictionary<string, int> nameOccurenceData = FamilyStats.getNameOccurences();
+            Dictionary<string, int> nameOccurenceData = _stats.getNameOccurences();
             for (int i=0; i < (nameOccurenceData.Keys.Count > 10 ? 10 : nameOccurenceData.Keys.Count); i++)
             {                
                 nameOccurenceSeries.Points.AddXY(nameOccurenceData.ElementAt(i).Key, nameOccurenceData.ElementAt(i).Value);
             }
 
-            Dictionary<string, int> countryOccurenceData = FamilyStats.getCountryOccurences();
+            Dictionary<string, int> countryOccurenceData = _stats.getCountryOccurences();
             for (int i = 0; i < (countryOccurenceData.Keys.Count > 10 ? 10 : countryOccurenceData.Keys.Count); i++)
             {
                 countryOccurenceSeries.Points.AddXY(countryOccurenceData.ElementAt(i).Key, countryOccurenceData.ElementAt(i).Value);
             }
 
+            Dictionary<int, double> memberDuplicity = _stats.getHistoricalDuplicity(_family.getMember(currentMember), _family.Family);
+            for (int i = 0; i < memberDuplicity.Keys.Count; i++)
+            {
+                memberOccuranceSeries.Points.AddXY(memberDuplicity.ElementAt(i).Key, memberDuplicity.ElementAt(i).Value);
+            }
+            for (int i = 0; i < memberDuplicity.Keys.Count; i++)
+            {
+                generationalUniqueCount.Points.AddXY(memberDuplicity.ElementAt(i).Key, Math.Pow(2, memberDuplicity.ElementAt(i).Key) / memberDuplicity.ElementAt(i).Value);
+                generationalTotalCount.Points.AddXY(memberDuplicity.ElementAt(i).Key, Math.Pow(2, memberDuplicity.ElementAt(i).Key));
+            }
+
+            Dictionary<int, double> generationalCompleteness = _stats.getGenerationalCompleteness(_family.Family);
+            for(int i = 0; i < generationalCompleteness.Keys.Count; i++)
+            {
+                generationalCompletenessSeries.Points.AddXY(generationalCompleteness.ElementAt(i).Key, Math.Round(generationalCompleteness.ElementAt(i).Value, 3));
+            }
+
+
+            _stats.getCountByGenerationAndLocation(_family.Family, false, ref this.membersByGenerationAndLocation);
+            _stats.getCountByGenerationAndLocation(_family.Family, true, ref this.membersByGenerationAndLocation100);
+            _stats.getCountByGenerationAndLocation(_family.FamilyExtended, false, ref this.membersByGenerationAndLocationExtended);
+            _stats.getCountByGenerationAndLocation(_family.FamilyExtended, true, ref this.membersByGenerationAndLocationExtended100);
+
             this.occuranceChart.Invalidate();
             this.countryOccuranceChart.Invalidate();
+            this.memberOccuranceChart.Invalidate();
+            this.generationalCompletenessChart.Invalidate();
+            this.generationUniqueCount.Invalidate();
         }
 
         private void createTree(string memberName)
@@ -132,7 +195,7 @@ namespace Geneal
 
             this.currentMember = memberName;
 
-            Member[][] nodes = FamilyMembers.assignNodes(FamilyMembers.getMember(memberName), 10);
+            Member[][] nodes = _family.assignNodes(_family.getMember(memberName), 10);
             this.treePanel.Controls.Clear();
 
             for (int i=0; i < nodes.Length; i++)
@@ -221,8 +284,8 @@ namespace Geneal
                 this.infoPanel.Controls.Add(infoLabel);
             }
 
-            if(memInfo.Parent1 != "" && FamilyMembers.getMember(memInfo.Parent1) == null ||
-                memInfo.Parent2 != "" && FamilyMembers.getMember(memInfo.Parent2) == null)
+            if(memInfo.Parent1 != "" && _family.getMember(memInfo.Parent1) == null ||
+                memInfo.Parent2 != "" && _family.getMember(memInfo.Parent2) == null)
             {
                 int index = memInfo.MiscInfo.Keys.Count;
 
@@ -261,6 +324,7 @@ namespace Geneal
 
             lblSearchGotoMap.Tag = mem;
             lblSearchGotoTree.Tag = mem.Name;
+            lblSetAsRoot.Tag = mem.Name;
 
             searchMiscInfoBox.Items.Clear();
 
@@ -360,7 +424,7 @@ namespace Geneal
         private void showInfo(object sender, EventArgs e)
         {
             string memName = ((Label)sender).Name;
-            populateInfoPanel(FamilyMembers.Family.Get(memName));
+            populateInfoPanel(_family.Family.Get(memName));
         }
 
         private void recenterTree(object sender, EventArgs e)
@@ -403,7 +467,7 @@ namespace Geneal
                 return;
             }
 
-            Maps.setMarkers(overlay, value);
+            _mapData.setMarkers(_family, overlay, value);
         }
 
         private void lblGotoTree_Click(object sender, EventArgs e)
@@ -411,7 +475,7 @@ namespace Geneal
             this.currentMember = (string)((Label)sender).Tag;
             this.tabControl1.SelectedIndex = 0;
             createTree(this.currentMember);
-            populateInfoPanel(FamilyMembers.getMember(this.currentMember));
+            populateInfoPanel(_family.getMember(this.currentMember));
         }
 
         private void lblGotoMap_Click(object sender, EventArgs e)
@@ -431,7 +495,7 @@ namespace Geneal
                 return;
             }
 
-            Tuple<double, double> loc = Maps.lookupLocation(mem.BirthLocation);
+            Tuple<double, double> loc = _mapData.lookupLocation(mem.BirthLocation);
 
             if(loc == null)
             {
@@ -446,7 +510,12 @@ namespace Geneal
             
             populateMapInfoPanel(mem);
         }
-                
+
+        private void lblGotoRoot_Click(object sender, EventArgs e)
+        {
+            createTree(Preferences.RootUser);
+        }
+
         private void keyUpdateSearch(object sender, KeyEventArgs e)
         {
             setListData();
@@ -455,7 +524,40 @@ namespace Geneal
         private void searchResults_SelectedIndexChanged(object sender, EventArgs e)
         {
             string member = (string)((ListBox)sender).SelectedItem;
-            populateSearchInfoPanel(FamilyMembers.getMember(member));
+            populateSearchInfoPanel(_family.getMember(member));
+        }
+
+        private void lblRefresh_Click(object sender, EventArgs e)
+        {
+            Preferences.Init();
+            _mapData = new Maps();
+            _family = new FamilyMembers(Preferences.DataSourceFile, _mapData);
+            _stats = new FamilyStats(_family);
+
+            this.currentMember = Preferences.RootUser;
+
+            InitFromData();
+        }
+
+        private void lblSetAsRoot_Click(object sender, EventArgs e)
+        {
+            Preferences.RootUser = (string)((Label)sender).Tag;
+            _family.Init();
+            _stats = new FamilyStats(_family);
+
+            this.currentMember = Preferences.RootUser;
+
+            InitFromData();
+
+            this.tabControl1.SelectedIndex = 0;
+            populateInfoPanel(_family.getMember(this.currentMember));
+        }
+
+        private void lblRefreshExtended_Click(object sender, EventArgs e)
+        {
+            _family.extendFamily(Preferences.RootUser);
+            _stats.getCountByGenerationAndLocation(_family.FamilyExtended, false, ref this.membersByGenerationAndLocationExtended);
+            _stats.getCountByGenerationAndLocation(_family.FamilyExtended, true, ref this.membersByGenerationAndLocationExtended100);
         }
     }
 }

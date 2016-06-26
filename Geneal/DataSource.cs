@@ -11,12 +11,15 @@ namespace Geneal
 {
     public class DataSource
     {
+        private Maps _mapData;
         private MemberCollection _members;
         private static string CACHE_PATH = Directory.GetCurrentDirectory() + @"\locations.dat";
 
-        public DataSource(string source, string sourceName)
+        public DataSource(string source, string sourceName, Maps map)
         {
-            if(source == "JSON")
+            this._mapData = map;
+
+            if (source == "JSON")
             {
                 LoadJsonFile(sourceName);
             }
@@ -199,7 +202,7 @@ namespace Geneal
             for(int i=0; i < lines.Length; i++)
             {
                 string[] entry = lines[i].Split(',');
-                Maps.addLocation(entry[0].Replace("%cma;", ","), entry[1], entry[2]);
+                this._mapData.addLocation(entry[0].Replace("%cma;", ","), entry[1], entry[2]);
             }
         }
 

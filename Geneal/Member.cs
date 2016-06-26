@@ -16,10 +16,12 @@ namespace Geneal
         public DateTime BirthDate { get; set; }
 
         public String BirthLocation { get; set; }
+        public String BirthCountry { get { return this.BirthLocation.Split(',').Last().Trim().ToUpper(); } }
 
         public DateTime DeathDate { get; set; }
 
         public String DeathLoction { get; set; }
+        public String DeathCountry { get { return this.DeathLoction.Split(',').Last().Trim().ToUpper(); } }
 
         public String Parent1 { get; set; }
 

@@ -14,20 +14,24 @@ namespace Geneal
     public class Maps
     {
         private const string _API_KEY = "AIzaSyDsFcfY0LgZ_O9GAcuOsw_6Ocn8-a4NIls";
-        private static Dictionary<string, Tuple<double, double>> _LocationMap = new Dictionary<string, Tuple<double, double>>();
-        private static HttpClient http = new HttpClient();
+        private Dictionary<string, Tuple<double, double>> _LocationMap ;
+        private HttpClient http;
 
-        public Maps() { }
+        public Maps()
+        {
+            _LocationMap = new Dictionary<string, Tuple<double, double>>();
+            http = new HttpClient();
+        }
 
-        public static void setMarkers(GMapOverlay overlay, int year)
+        public void setMarkers(FamilyMembers family, GMapOverlay overlay, int year)
         {
             overlay.Markers.Clear();
 
-            List<Member> members = FamilyMembers.getLiving(year);
+            List<Member> members = family.getLiving(year);
 
             for(int i=0; i < members.Count; i++)
             {
-                Tuple<double, double> loc = Maps.lookupLocation(members[i].BirthLocation);
+                Tuple<double, double> loc = this.lookupLocation(members[i].BirthLocation);
 
                 if(loc == null)
                 {
@@ -45,7 +49,7 @@ namespace Geneal
             }
         }
 
-        public static void addLocation(string location, string lat, string lng)
+        public void addLocation(string location, string lat, string lng)
         {
             Double latD = Double.TryParse(lat, out latD) ? latD : 2000;
             Double lngD = Double.TryParse(lng, out lngD) ? lngD : 2000;
@@ -55,15 +59,15 @@ namespace Geneal
                 return;
             }
 
-            Maps.addLocation(location, latD, lngD);
+            this.addLocation(location, latD, lngD);
         }
 
-        public static void addLocation(string location, double lat, double lng)
+        public void addLocation(string location, double lat, double lng)
         {
             _LocationMap.Add(location, new Tuple<double, double>(lat, lng));
         }
 
-        public static Tuple<double, double> lookupLocation(string location)
+        public Tuple<double, double> lookupLocation(string location)
         {
             location = location.Replace("%apos;", "'");
             if(_LocationMap.ContainsKey(location))
@@ -81,7 +85,7 @@ namespace Geneal
             return _LocationMap[location];
         }
 
-        public static Tuple<double, double> Lookup(string address) // async Task<string>
+        public Tuple<double, double> Lookup(string address) // async Task<string>
         {
             string url = "http://maps.google.com/maps/api/geocode/xml?address=" + address + "&sensor=false";
 

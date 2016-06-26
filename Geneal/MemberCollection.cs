@@ -22,6 +22,11 @@ namespace Geneal
             }
         }
 
+        public MemberCollection clone()
+        {
+            return (MemberCollection)this.MemberwiseClone();
+        }
+
         public Member Get(int i) 
         {
             return (Member)List[i];
@@ -32,6 +37,11 @@ namespace Geneal
             return ( from m in List.Cast<Member>().ToList()
                      where m.Name.ToUpper() == mem.ToUpper()
                      select m ).FirstOrDefault();
+        }
+
+        public void Add(Member mem)
+        {
+            this.List.Add(mem);
         }
 
         public void Update(Member setMem)

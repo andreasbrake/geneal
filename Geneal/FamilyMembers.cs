@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,46 +7,62 @@ namespace Geneal
 {
     public class FamilyMembers
     {
-        private static DataSource _ds;
-        private static MemberCollection _family;
-        private static Member[][] _nodes;
-        private static Member _rootUser;
-        private static Tuple<Member, float, float>[] _nodeAssignments;
-        private static Tuple<float, float, float, float>[] _linesAssignments;
+        private DataSource _ds;
+        private MemberCollection _family;
+        private MemberCollection _familyExtended;
+        private Member[][] _nodes;
+        private Member _rootUser;
+        private Tuple<Member, float, float>[] _nodeAssignments;
+        private Tuple<float, float, float, float>[] _linesAssignments;
 
-        public static MemberCollection Family
+        public MemberCollection Family
         {
             get { return _family; }
         }
-        public static Tuple<Member, float, float>[] NodeAssignments
+        public MemberCollection FamilyExtended
+        {
+            get { return _familyExtended; }
+        }
+        public Tuple<Member, float, float>[] NodeAssignments
         {
             get { return _nodeAssignments; }
         }
 
-        public FamilyMembers() 
+        private string _dataSourceFile;
+
+        public FamilyMembers(string _dataSourceFile, Maps map)
         {
-            _ds = new DataSource("JSON", "combined.json");
+            this._dataSourceFile = _dataSourceFile;
+
+            _ds = new DataSource("JSON", _dataSourceFile, map);
             _family = _ds.getMembers();
-            recenterTree(Preferences.RootUser);
-            assignGenerations();
+
+            this.Init();
         }
 
-        public static void recenterTree(string mem)
+        public void Init()
+        {
+            recenterTree(Preferences.RootUser);
+            assignGenerations();
+            _familyExtended = new MemberCollection();
+        }
+
+        public void recenterTree(string mem)
         {
             recenterTree(_family.Get(mem));
         }
-        public static void recenterTree(Member mem)
+        public void recenterTree(Member mem)
         {
             _rootUser = mem;
             _family.setMaxDepth(_rootUser);
         }
 
-        public static Member getMember(string mem)
+        public Member getMember(string mem)
         {
             return _family.Get(mem);
         }
 
-        public static int getFirstBirthYear()
+        public int getFirstBirthYear()
         {
             return (from f in _family.Cast<Member>()
                     where f.BirthDate.Year > 1 && f.Generation >= 0
@@ -53,10 +70,10 @@ namespace Geneal
                     select f.BirthDate.Year).First();
         }
 
-        public static List<Member> getLiving(int year)
+        public List<Member> getLiving(int year)
         {
             return (from f in _family.Cast<Member>()
-                    where f.BirthDate.Year <= year 
+                    where (f.BirthDate.Year > 1 && f.BirthDate.Year <= year || f.BirthDate.Year == 1 && f.DeathDate.Year - 75 <= year)
                         && (f.DeathDate.Year >= year || f.DeathLoction == "Still Alive" || f.DeathDate.Year == 1 && f.BirthDate.Year + 75 >= year) 
                         && f.Generation >= 0
                     select f).ToList();
@@ -64,10 +81,12 @@ namespace Geneal
 
         public void assignGenerations()
         {
+            _family = new MemberCollection(new ArrayList(_family.Cast<Member>().Select(m => { m.Generation = -1; m.GenerationIndex = -1; return m; }).ToList()));
+
             Member rootMember = _family.Get(Preferences.RootUser);
             assignGeneration(rootMember, 0, 0);
         }
-        public void assignGeneration(Member mem, int depth, int breadth)
+        private void assignGeneration(Member mem, int depth, int breadth)
         {
             string memName = mem.Name;
             string parent1Name = mem.Parent1;
@@ -90,11 +109,11 @@ namespace Geneal
             }
         }
 
-        public static Member[][] assignNodes(string root, int maxDepth = -1)
+        public Member[][] assignNodes(string root, int maxDepth = -1)
         {
             return assignNodes(_family.Get(root), maxDepth);
         }
-        public static Member[][] assignNodes(Member root, int maxDepth = -1)
+        public Member[][] assignNodes(Member root, int maxDepth = -1)
         {
             _nodes = new Member[(maxDepth > 0 ? maxDepth : _family.maxDepth) + 2][];
             
@@ -110,7 +129,7 @@ namespace Geneal
             return _nodes;
         }
 
-        private static void addNodes(Member mem, int depth, int breadth, int maxDepth)
+        private void addNodes(Member mem, int depth, int breadth, int maxDepth)
         {
             string memName = mem.Name;
             string parent1Name = mem.Parent1;
@@ -131,7 +150,7 @@ namespace Geneal
             }
         }
 
-        public static void generateNodePlacements(float zoom)
+        public void generateNodePlacements(float zoom)
         {
             float RECT_HEIGHT = 25 / zoom;
             float RECT_WIDTH = 150 / zoom;
@@ -159,6 +178,81 @@ namespace Geneal
 
             _nodeAssignments = nodeAssignmentsList.ToArray();
             _linesAssignments = linesList.ToArray();
+        }
+
+        public void extendFamily(string root)
+        {
+            _familyExtended = new MemberCollection();
+            Member rootmem = _family.Get(root);
+            Member p0 = new Member()
+            {
+                BirthLocation = rootmem.BirthLocation,
+                Generation = 0,
+                Parent1 = rootmem.Parent1,
+                Parent2 = rootmem.Parent2
+            };
+            int maxDepth = _family.Cast<Member>().Select(m => m.Generation).Max();
+            extendNode(p0, 0, (maxDepth > 12 ? 12 : maxDepth));
+        }
+
+        private void extendNode(Member mem, int depth, int maxDepth)
+        {
+            _familyExtended.Add(mem);
+            //Console.Write(depth + "," + breadth + "\n");
+
+            if (depth > maxDepth)
+            {
+                return;
+            }
+
+            Member p1 = _family.Get(mem.Parent1), p2 = _family.Get(mem.Parent2);
+
+            if (p1 == null)
+            {
+                p1 = new Member()
+                {
+                    BirthLocation = mem.BirthLocation,
+                    Generation = depth + 1,
+                    Parent1 = "",
+                    Parent2 = ""
+                };
+            }
+            else
+            {
+                p1 = new Member()
+                {
+                    BirthLocation = p1.BirthCountry != "" ? p1.BirthLocation :  mem.BirthLocation,
+                    Generation = depth + 1,
+                    Parent1 = p1.Parent1,
+                    Parent2 = p1.Parent2
+                };
+            }
+            
+            if (p2 == null)
+            {
+                p2 = new Member()
+                {
+                    BirthLocation = mem.BirthLocation,
+                    Generation = depth + 1,
+                    Parent1 = "",
+                    Parent2 = ""
+                };
+            }
+            else
+            {
+                p2 = new Member()
+                {
+                    BirthLocation = p2.BirthCountry != "" ? p2.BirthLocation : mem.BirthLocation,
+                    Generation = depth + 1,
+                    Parent1 = p2.Parent1,
+                    Parent2 = p2.Parent2
+                };
+            }
+
+            extendNode(p1, depth + 1, maxDepth);
+            extendNode(p2, depth + 1, maxDepth);
+
+            return;
         }
 
     }
