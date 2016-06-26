@@ -24,10 +24,22 @@ namespace Geneal
         };
 
         private FamilyMembers _family;
+        private MemberCollection _members;
+        private int _maxGeneration;
+        private List<ChartData> _familyCounts;
+        private List<ChartData> _familyCountsExtended;
 
         public FamilyStats(FamilyMembers family)
         {
             this._family = family;
+            this._members = family.Family;
+            this._maxGeneration = _members.Count > 0 ? (int)_members.Cast<Member>().Select(m => m.Generation).Max() : 0;
+
+            this._familyCounts = new List<ChartData>();
+            this._familyCountsExtended = new List<ChartData>();
+
+            traverseTree(_members.Get(Preferences.RootUser), family.Family.clone(), this._maxGeneration, false, ref _familyCounts);
+            traverseTree(_members.Get(Preferences.RootUser), family.Family.clone(), this._maxGeneration, true, ref _familyCountsExtended);
         }
 
         public Dictionary<string, int> getNameOccurences()
@@ -41,6 +53,36 @@ namespace Geneal
                        select new { g.Key, Count = g.Count() };
             
             return list.ToDictionary(x => x.Key, x => x.Count);
+        }
+
+        public void getCountryOccurences(Boolean extend, ref Chart chart)
+        {
+            chart.Series.Clear();
+
+            List<ChartData2> results = (
+                from ChartData d in (extend ? this._familyCountsExtended : this._familyCounts)
+                where d.series != ""
+                group d by d.series into grp
+                select new ChartData2
+                {
+                    yValue = grp.Sum(g => g.yValue),
+                    xValue = grp.Key,
+                    series = "Series 1"
+                }
+            ).ToList();
+
+            string[] values = results.OrderByDescending(r => r.yValue).Select(r => r.xValue).ToArray();
+
+            Series s = new Series { Name = "Occurance", Color = Color.Blue, ChartType = SeriesChartType.Column, XValueType = ChartValueType.String, ToolTip = "(#VALX, #VALY)" }; ;
+
+            for (int i = 0; i < values.Length; i++)
+            {
+                s.Points.AddXY(values[i], (from r in results where r.xValue == values[i] select r.yValue).FirstOrDefault());
+            }
+
+            chart.Series.Add(s);
+            
+            chart.Invalidate();
         }
 
         public Dictionary<string, int> getCountryOccurences()
@@ -193,30 +235,26 @@ namespace Geneal
                 .ToDictionary(m => m.Key, m => 100 * m.Value / Math.Pow(2, m.Key));
         }
 
-        public void getCountByGenerationAndLocation(MemberCollection members, Boolean percent, ref Chart chart)
+        public void getCountByGenerationAndLocation(MemberCollection members, Boolean percent, Boolean extend, ref Chart chart)
         {
             chart.Series.Clear();
 
+            string[] series = _family.Family.Cast<Member>().Select(m => m.BirthCountry).Where(m => m != "").Distinct().OrderBy(c => c).ToArray();
+            
             List<ChartData> results = (
-                from Member m in members
-                where m.Generation >= 0 && m.BirthCountry != null && m.BirthCountry.Length > 0
-                orderby m.Generation
-                group m by new
+                from ChartData d in (extend ? this._familyCountsExtended : this._familyCounts)
+                group d by new
                 {
-                    m.BirthCountry,
-                    m.Generation,
+                    d.xValue,
+                    d.series,
                 } into grp
                 select new ChartData
                 {
-                    yValue = grp.Count(),
-                    xValue = grp.Key.Generation,
-                    series = grp.Key.BirthCountry
+                    yValue = grp.Sum(g => g.yValue),
+                    xValue = grp.Key.xValue,
+                    series = grp.Key.series
                 }
             ).ToList();
-
-            string[] series = _family.Family.Cast<Member>().Select(m => m.BirthCountry).Where(m => m != "").Distinct().OrderBy(c => c).ToArray();
-            int maxXAxis = (int)_family.Family.Cast<Member>().Select(m => m.Generation).Max() - 1;
-            int maxGeneration = members.Count > 0 ? (int)members.Cast<Member>().Select(m => m.Generation).Max() : 0;
 
             for (int i=0; i < series.Length; i++)
             {
@@ -230,7 +268,7 @@ namespace Geneal
                     s.Color = theme[series[i]];
                 }
 
-                for(int j=0; j < maxGeneration; j++)
+                for(int j=0; j < _maxGeneration; j++)
                 {
                     s.Points.AddXY(j, (from r in results where r.series == series[i] && r.xValue == j select r.yValue).FirstOrDefault());
                 }
@@ -238,8 +276,71 @@ namespace Geneal
                 chart.Series.Add(s);
             }
 
-            chart.ChartAreas[0].AxisX.Maximum = maxXAxis;
+            chart.ChartAreas[0].AxisX.Maximum = _maxGeneration - 1;
             chart.Invalidate();
+        }
+
+        public void traverseTree(Member mem, MemberCollection extended, int maxDepth, Boolean extend, ref List<ChartData> data)
+        {
+            data.Add(new ChartData()
+            {
+                xValue = mem.Generation,
+                yValue = 1,
+                series = mem.BirthCountry
+            });
+
+            if(mem.Generation >= maxDepth)
+            {
+                return;
+            }
+
+            Member p1 = extended.Get(mem.Parent1), p2 = extended.Get(mem.Parent2);
+
+            if(p1 != null)
+            {
+                if(p1.BirthCountry == "")
+                {
+                    p1.BirthLocation = mem.BirthLocation;
+                }
+                traverseTree(p1, extended, maxDepth, extend, ref data);
+            }
+            else if(extend)
+            {
+                int missing = (int)Math.Pow(2, maxDepth - mem.Generation);
+                for(int i=1; i < maxDepth - mem.Generation; i++)
+                {
+                    data.Add(new ChartData()
+                    {
+                        xValue = mem.Generation + i,
+                        yValue = Math.Pow(2, i),
+                        series = mem.BirthCountry
+                    });
+                }
+            }
+
+            if (p2 != null)
+            {
+                if (p2.BirthCountry == "")
+                {
+                    p2.BirthLocation = mem.BirthLocation;
+                }
+                traverseTree(p2, extended, maxDepth, extend, ref data);
+            }
+            else if (extend)
+            {
+                int missing = (int)Math.Pow(2, maxDepth - mem.Generation);
+                for (int i = 1; i < maxDepth - mem.Generation; i++)
+                {
+                    data.Add(new ChartData()
+                    {
+                        xValue = mem.Generation + i,
+                        yValue = Math.Pow(2, i),
+                        series = mem.BirthCountry
+                    });
+                }
+            }
+
+            return;
         }
 
         public static Color fromHex(string hex)
@@ -252,6 +353,13 @@ namespace Geneal
     {
         public double yValue { get; set; }
         public double xValue { get; set; }
+        public string series { get; set; }
+    }
+
+    public class ChartData2
+    {
+        public double yValue { get; set; }
+        public string xValue { get; set; }
         public string series { get; set; }
     }
 }

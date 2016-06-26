@@ -25,11 +25,18 @@ namespace Geneal
 
         public AppMain()
         {
+            this.Hide();
+
+            SplashScreen spashScreen = new SplashScreen();
+            spashScreen.Show();
+
             InitObjects();
 
             InitializeComponent();
 
             this.InitFromData();
+
+            spashScreen.Hide();
         }
 
         private void InitObjects()
@@ -125,21 +132,18 @@ namespace Geneal
         {
             //new FamilyStats();
             this.occuranceChart.Series.Clear();
-            this.countryOccuranceChart.Series.Clear();
             this.memberOccuranceChart.Series.Clear();
             this.generationalCompletenessChart.Series.Clear();
             this.generationUniqueCount.Series.Clear();
             this.generationUniqueCount.Series.Clear();
 
             Series nameOccurenceSeries = new Series { Name = "Occurance", Color = System.Drawing.Color.Blue, ChartType = SeriesChartType.Column, XValueType = ChartValueType.String, ToolTip = "#VALY" };
-            Series countryOccurenceSeries = new Series { Name = "Occurance", Color = System.Drawing.Color.Blue, ChartType = SeriesChartType.Column, XValueType = ChartValueType.String, ToolTip = "#VALY" };
             Series memberOccuranceSeries = new Series { Name = "Occurance", Color = System.Drawing.Color.Blue, ChartType = SeriesChartType.Column, XValueType = ChartValueType.String, ToolTip = "#VALY" };
             Series generationalCompletenessSeries = new Series { Name = "Occurance", Color = System.Drawing.Color.Blue, ChartType = SeriesChartType.Column, XValueType = ChartValueType.Int32, ToolTip = "#VALY" };
             Series generationalUniqueCount = new Series { Name = "Occurance", Color = System.Drawing.Color.Blue, ChartType = SeriesChartType.Column, XValueType = ChartValueType.Int32, ToolTip = "#VALY" };
             Series generationalTotalCount = new Series { Name = "Occurance2", Color = System.Drawing.Color.Green, ChartType = SeriesChartType.Line, XValueType = ChartValueType.Int32, ToolTip = "#VALY" };
 
             this.occuranceChart.Series.Add(nameOccurenceSeries);
-            this.countryOccuranceChart.Series.Add(countryOccurenceSeries);
             this.memberOccuranceChart.Series.Add(memberOccuranceSeries);
             this.generationalCompletenessChart.Series.Add(generationalCompletenessSeries);
             this.generationUniqueCount.Series.Add(generationalUniqueCount);
@@ -149,12 +153,6 @@ namespace Geneal
             for (int i=0; i < (nameOccurenceData.Keys.Count > 10 ? 10 : nameOccurenceData.Keys.Count); i++)
             {                
                 nameOccurenceSeries.Points.AddXY(nameOccurenceData.ElementAt(i).Key, nameOccurenceData.ElementAt(i).Value);
-            }
-
-            Dictionary<string, int> countryOccurenceData = _stats.getCountryOccurences();
-            for (int i = 0; i < (countryOccurenceData.Keys.Count > 10 ? 10 : countryOccurenceData.Keys.Count); i++)
-            {
-                countryOccurenceSeries.Points.AddXY(countryOccurenceData.ElementAt(i).Key, countryOccurenceData.ElementAt(i).Value);
             }
 
             Dictionary<int, double> memberDuplicity = _stats.getHistoricalDuplicity(_family.getMember(currentMember), _family.Family);
@@ -174,14 +172,13 @@ namespace Geneal
                 generationalCompletenessSeries.Points.AddXY(generationalCompleteness.ElementAt(i).Key, Math.Round(generationalCompleteness.ElementAt(i).Value, 3));
             }
 
-
-            _stats.getCountByGenerationAndLocation(_family.Family, false, ref this.membersByGenerationAndLocation);
-            _stats.getCountByGenerationAndLocation(_family.Family, true, ref this.membersByGenerationAndLocation100);
-            _stats.getCountByGenerationAndLocation(_family.FamilyExtended, false, ref this.membersByGenerationAndLocationExtended);
-            _stats.getCountByGenerationAndLocation(_family.FamilyExtended, true, ref this.membersByGenerationAndLocationExtended100);
+            _stats.getCountryOccurences(false, ref this.countryOccuranceChart);
+            _stats.getCountryOccurences(true, ref this.countryOccuranceChartExtended);
+            _stats.getCountByGenerationAndLocation(_family.Family, false, false, ref this.membersByGenerationAndLocation);
+            _stats.getCountByGenerationAndLocation(_family.Family, true, false, ref this.membersByGenerationAndLocation100);
+            _stats.getCountByGenerationAndLocation(_family.Family, true, true, ref this.membersByGenerationAndLocationExtended100);
 
             this.occuranceChart.Invalidate();
-            this.countryOccuranceChart.Invalidate();
             this.memberOccuranceChart.Invalidate();
             this.generationalCompletenessChart.Invalidate();
             this.generationUniqueCount.Invalidate();
@@ -551,13 +548,6 @@ namespace Geneal
 
             this.tabControl1.SelectedIndex = 0;
             populateInfoPanel(_family.getMember(this.currentMember));
-        }
-
-        private void lblRefreshExtended_Click(object sender, EventArgs e)
-        {
-            _family.extendFamily(Preferences.RootUser);
-            _stats.getCountByGenerationAndLocation(_family.FamilyExtended, false, ref this.membersByGenerationAndLocationExtended);
-            _stats.getCountByGenerationAndLocation(_family.FamilyExtended, true, ref this.membersByGenerationAndLocationExtended100);
         }
     }
 }
