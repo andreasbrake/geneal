@@ -2,72 +2,87 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Geneal
 {
     public class FamilyMembers
     {
         private DataSource _ds;
-        private MemberCollection _family;
-        private MemberCollection _familyExtended;
+        private List<Member> _family;
         private Member[][] _nodes;
         private Member _rootUser;
         private Tuple<Member, float, float>[] _nodeAssignments;
         private Tuple<float, float, float, float>[] _linesAssignments;
 
-        public MemberCollection Family
+        public List<Member> Family
         {
             get { return _family; }
-        }
-        public MemberCollection FamilyExtended
-        {
-            get { return _familyExtended; }
         }
         public Tuple<Member, float, float>[] NodeAssignments
         {
             get { return _nodeAssignments; }
         }
+        
+        public int maxDepth { get; set; }
 
-        private string _dataSourceFile;
-
-        public FamilyMembers(string _dataSourceFile, Maps map)
+        public FamilyMembers(Maps map)
         {
-            this._dataSourceFile = _dataSourceFile;
+            this._ds = new DataSource(map);
+            this._family = _ds.getMembers();
 
-            _ds = new DataSource("JSON", _dataSourceFile, map);
-            _family = _ds.getMembers();
-
-            this.Init();
-        }
-
-        public void Init()
-        {
             recenterTree(Preferences.RootUser);
             assignGenerations();
-            _familyExtended = new MemberCollection();
         }
+
+        public void RefreshData()
+        {
+            this._ds.LoadDataFile();
+            this._family = _ds.getMembers();
+
+            recenterTree(Preferences.RootUser);
+            assignGenerations();
+        }
+
+        public void ExportCurrentFamily()
+        {
+            this._ds.WriteCurrentToDataFile();
+        }
+
+        public void LoadFamilyFromFile(string filepath)
+        {
+            this._ds.LoadJsonFile(filepath);
+            this._family = _ds.getMembers();
+
+            recenterTree(Preferences.RootUser);
+            assignGenerations();
+
+            this._ds.WriteToDataFile();
+        }
+
+        
 
         public void recenterTree(string mem)
         {
-            recenterTree(_family.Get(mem));
+            recenterTree(getMember(mem));
         }
         public void recenterTree(Member mem)
         {
             _rootUser = mem;
-            _family.setMaxDepth(_rootUser);
+            maxDepth = _family.Count > 0 ? (from m in _family select m.Generation).Max() : 0;
         }
 
         public Member getMember(string mem)
         {
-            return _family.Get(mem);
+            return (from m in _family where m.Name.ToUpper() == mem.ToUpper() select m).FirstOrDefault();
         }
 
         public int getFirstBirthYear()
         {
-            return (from f in _family.Cast<Member>()
+            return (from f in _family
                     where f.BirthDate.Year > 1 && f.Generation >= 0
                     orderby f.BirthDate ascending
-                    select f.BirthDate.Year).First();
+                    select f.BirthDate.Year).FirstOrDefault();
         }
 
         public List<Member> getLiving(int year)
@@ -81,51 +96,69 @@ namespace Geneal
 
         public void assignGenerations()
         {
-            _family = new MemberCollection(new ArrayList(_family.Cast<Member>().Select(m => { m.Generation = -1; m.GenerationIndex = -1; return m; }).ToList()));
+            _family = _family.Cast<Member>().Select(m => { m.Generation = -1; m.GenerationIndex = -1; return m; }).ToList();
 
-            Member rootMember = _family.Get(Preferences.RootUser);
-            assignGeneration(rootMember, 0, 0);
+            Member rootMember = getMember(Preferences.RootUser);
+
+            if(rootMember != null)
+            {
+                assignGeneration(rootMember, 0, 0);
+            }
         }
         private void assignGeneration(Member mem, int depth, int breadth)
         {
             string memName = mem.Name;
-            string parent1Name = mem.Parent1;
-            string parent2Name = mem.Parent2;
 
             mem.Generation = depth;
             mem.GenerationIndex = breadth;
-            _family.Update(mem);
+            //_family.Update(mem);
             
-            Tuple<Member, Member> parents = _family.GetParents(mem);
+            Member p1 = getMember(mem.Parent1), p2 = getMember(mem.Parent2);
 
-            if (parents.Item1 != null)
+            if(mem.BirthRegion != null)
             {
-                assignGeneration(parents.Item1, depth + 1, breadth * 2);
+                var a = 1;
+            }
+            if(mem.Parent1.ToUpper() == mem.Name.ToUpper() || mem.Parent2.ToUpper() == mem.Name.ToUpper())
+            {
+                var b = 1;
+            }
+            if (p1 != null)
+            {
+                assignGeneration(p1, depth + 1, breadth * 2);
             }
 
-            if (parents.Item2 != null)
+            if (p2 != null)
             {
-                assignGeneration(parents.Item2, depth + 1, breadth * 2 + 1);
+                assignGeneration(p2, depth + 1, breadth * 2 + 1);
             }
         }
 
         public Member[][] assignNodes(string root, int maxDepth = -1)
         {
-            return assignNodes(_family.Get(root), maxDepth);
+            return assignNodes(getMember(root), maxDepth);
         }
         public Member[][] assignNodes(Member root, int maxDepth = -1)
         {
-            _nodes = new Member[(maxDepth > 0 ? maxDepth : _family.maxDepth) + 2][];
+            if(root == null)
+            {
+                return new Member[0][];
+            }
+
+            _nodes = new Member[(maxDepth > 0 ? maxDepth : maxDepth) + 2][];
             
-            for(int i=0; i <= (maxDepth > 0 ? maxDepth :_family.maxDepth); i++)
+            for(int i=0; i <= (maxDepth > 0 ? maxDepth : maxDepth); i++)
             {
                 _nodes[i + 1] = new Member[(int)Math.Pow(2, i)];
             }
 
-            _nodes[0] = _family.GetChildren(root);
+
+            _nodes[0] = (from m in _family
+                         where (m.Parent1 == root.Name || m.Parent2 == root.Name) && m.Generation >= 0
+                         select m).ToArray();
 
             addNodes(root, 1, 0, maxDepth + 1);
-            
+
             return _nodes;
         }
 
@@ -136,17 +169,17 @@ namespace Geneal
             string parent2Name = mem.Parent2;
 
             _nodes[depth][breadth] = mem;
+            
+            Member p1 = getMember(mem.Parent1), p2 = getMember(mem.Parent2);
 
-            Tuple<Member, Member> parents = _family.GetParents(mem);
-
-            if(parents.Item1 != null && (maxDepth < 0 || depth < maxDepth) )
+            if (p1 != null && (maxDepth < 0 || depth < maxDepth) )
             {
-                addNodes(parents.Item1, depth + 1, breadth * 2, maxDepth);
+                addNodes(p1, depth + 1, breadth * 2, maxDepth);
             }
 
-            if (parents.Item2 != null && (maxDepth < 0 || depth < maxDepth))
+            if (p2 != null && (maxDepth < 0 || depth < maxDepth))
             {
-                addNodes(parents.Item2, depth + 1, breadth * 2 + 1, maxDepth);
+                addNodes(p2, depth + 1, breadth * 2 + 1, maxDepth);
             }
         }
 
@@ -180,79 +213,35 @@ namespace Geneal
             _linesAssignments = linesList.ToArray();
         }
 
-        public void extendFamily(string root)
+        public string[] getAlphabeticalLike(
+            string first, string last,
+            int birthStart, int birthEnd, string birthLocation,
+            int deathStart, int deathEnd, string deathLocation)
         {
-            _familyExtended = new MemberCollection();
-            Member rootmem = _family.Get(root);
-            Member p0 = new Member()
-            {
-                BirthLocation = rootmem.BirthLocation,
-                Generation = 0,
-                Parent1 = rootmem.Parent1,
-                Parent2 = rootmem.Parent2
-            };
-            int maxDepth = _family.Cast<Member>().Select(m => m.Generation).Max();
-            extendNode(p0, 0, (maxDepth > 12 ? 12 : maxDepth));
+            return (from m in _family
+                    where
+                        (first != "" ? Regex.Match(String.Join(",", m.Name.Split(',').Skip(1)).ToUpper(), first).Success : true)
+                        &&
+                        (last != "" ? Regex.Match(m.Name.Split(',')[0].ToUpper(), last).Success : true)
+                        &&
+                        (birthLocation != "" ? Regex.Match(m.BirthLocation.ToUpper(), birthLocation).Success : true)
+                        &&
+                        (deathLocation != "" ? Regex.Match(m.DeathLoction.ToUpper(), deathLocation).Success : true)
+                        &&
+                        (birthStart >= 0 ? m.BirthDate.Year >= birthStart : true)
+                        &&
+                        (birthEnd >= 0 ? m.BirthDate.Year <= birthEnd : true)
+                        &&
+                        (deathStart >= 0 ? m.DeathDate.Year >= deathStart : true)
+                        &&
+                        (deathEnd >= 0 ? m.DeathDate.Year <= deathEnd : true)
+                    orderby (m.Name.Split(',')[0] + m.Name.Split(',')[1]) ascending, m.BirthDate descending
+                    select m.Name).ToArray();
         }
 
-        private void extendNode(Member mem, int depth, int maxDepth)
+        public FamilyMembers Clone()
         {
-            _familyExtended.Add(mem);
-            //Console.Write(depth + "," + breadth + "\n");
-
-            if (depth > maxDepth)
-            {
-                return;
-            }
-
-            Member p1 = _family.Get(mem.Parent1), p2 = _family.Get(mem.Parent2);
-
-            if (p1 == null)
-            {
-                p1 = new Member()
-                {
-                    BirthLocation = mem.BirthLocation,
-                    Generation = depth + 1,
-                    Parent1 = "",
-                    Parent2 = ""
-                };
-            }
-            else
-            {
-                p1 = new Member()
-                {
-                    BirthLocation = p1.BirthCountry != "" ? p1.BirthLocation :  mem.BirthLocation,
-                    Generation = depth + 1,
-                    Parent1 = p1.Parent1,
-                    Parent2 = p1.Parent2
-                };
-            }
-            
-            if (p2 == null)
-            {
-                p2 = new Member()
-                {
-                    BirthLocation = mem.BirthLocation,
-                    Generation = depth + 1,
-                    Parent1 = "",
-                    Parent2 = ""
-                };
-            }
-            else
-            {
-                p2 = new Member()
-                {
-                    BirthLocation = p2.BirthCountry != "" ? p2.BirthLocation : mem.BirthLocation,
-                    Generation = depth + 1,
-                    Parent1 = p2.Parent1,
-                    Parent2 = p2.Parent2
-                };
-            }
-
-            extendNode(p1, depth + 1, maxDepth);
-            extendNode(p2, depth + 1, maxDepth);
-
-            return;
+            return (FamilyMembers)this.MemberwiseClone();
         }
 
     }

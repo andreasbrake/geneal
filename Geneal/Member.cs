@@ -6,16 +6,19 @@ using System.Threading.Tasks;
 
 namespace Geneal
 {
+    [Serializable]
     public class Member
     {
 
         #region properties
 
         public String Name { get; set; }
+        public String FamilyName { get { return this.Name.Split(',').First().Trim().ToUpper(); } }
 
         public DateTime BirthDate { get; set; }
 
         public String BirthLocation { get; set; }
+        public String BirthRegion { get; set; }
         public String BirthCountry { get { return this.BirthLocation.Split(',').Last().Trim().ToUpper(); } }
 
         public DateTime DeathDate { get; set; }
@@ -44,6 +47,11 @@ namespace Geneal
                 return MiscInfo[key];
             }
             return null;
+        }
+
+        public Member Clone()
+        {
+            return (Member)this.MemberwiseClone();
         }
     }
 }

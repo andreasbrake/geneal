@@ -25,7 +25,7 @@ namespace Geneal
 
         public AppMain()
         {
-            this.Hide();
+            //this.Hide();
 
             SplashScreen spashScreen = new SplashScreen();
             spashScreen.Show();
@@ -43,7 +43,7 @@ namespace Geneal
         {
             Preferences.Init();
             _mapData = new Maps();
-            _family = new FamilyMembers(Preferences.DataSourceFile, _mapData);
+            _family = new FamilyMembers(_mapData);
             _stats = new FamilyStats(_family);
 
             this.currentMember = Preferences.RootUser;
@@ -58,7 +58,7 @@ namespace Geneal
 
             createStats();
 
-            Dictionary<string, double> history = _stats.getHistoricalLocations(_family.getMember(Preferences.RootUser), _family.Family.maxDepth);
+            Dictionary<string, double> history = _stats.getHistoricalLocations(_family.getMember(Preferences.RootUser));
 
             setListData();
 
@@ -115,7 +115,7 @@ namespace Geneal
             }
 
             searchResults.Items.AddRange(
-                _family.Family.getAlphabeticalLike(
+                _family.getAlphabeticalLike(
                     name1,
                     name2,
                     birthYear1,
@@ -130,32 +130,19 @@ namespace Geneal
 
         private void createStats()
         {
-            //new FamilyStats();
-            this.occuranceChart.Series.Clear();
             this.memberOccuranceChart.Series.Clear();
-            this.generationalCompletenessChart.Series.Clear();
             this.generationUniqueCount.Series.Clear();
             this.generationUniqueCount.Series.Clear();
 
-            Series nameOccurenceSeries = new Series { Name = "Occurance", Color = System.Drawing.Color.Blue, ChartType = SeriesChartType.Column, XValueType = ChartValueType.String, ToolTip = "#VALY" };
             Series memberOccuranceSeries = new Series { Name = "Occurance", Color = System.Drawing.Color.Blue, ChartType = SeriesChartType.Column, XValueType = ChartValueType.String, ToolTip = "#VALY" };
-            Series generationalCompletenessSeries = new Series { Name = "Occurance", Color = System.Drawing.Color.Blue, ChartType = SeriesChartType.Column, XValueType = ChartValueType.Int32, ToolTip = "#VALY" };
             Series generationalUniqueCount = new Series { Name = "Occurance", Color = System.Drawing.Color.Blue, ChartType = SeriesChartType.Column, XValueType = ChartValueType.Int32, ToolTip = "#VALY" };
             Series generationalTotalCount = new Series { Name = "Occurance2", Color = System.Drawing.Color.Green, ChartType = SeriesChartType.Line, XValueType = ChartValueType.Int32, ToolTip = "#VALY" };
-
-            this.occuranceChart.Series.Add(nameOccurenceSeries);
+            
             this.memberOccuranceChart.Series.Add(memberOccuranceSeries);
-            this.generationalCompletenessChart.Series.Add(generationalCompletenessSeries);
             this.generationUniqueCount.Series.Add(generationalUniqueCount);
             this.generationUniqueCount.Series.Add(generationalTotalCount);
 
-            Dictionary<string, int> nameOccurenceData = _stats.getNameOccurences();
-            for (int i=0; i < (nameOccurenceData.Keys.Count > 10 ? 10 : nameOccurenceData.Keys.Count); i++)
-            {                
-                nameOccurenceSeries.Points.AddXY(nameOccurenceData.ElementAt(i).Key, nameOccurenceData.ElementAt(i).Value);
-            }
-
-            Dictionary<int, double> memberDuplicity = _stats.getHistoricalDuplicity(_family.getMember(currentMember), _family.Family);
+            Dictionary<int, double> memberDuplicity = _stats.getHistoricalDuplicity();
             for (int i = 0; i < memberDuplicity.Keys.Count; i++)
             {
                 memberOccuranceSeries.Points.AddXY(memberDuplicity.ElementAt(i).Key, memberDuplicity.ElementAt(i).Value);
@@ -166,21 +153,21 @@ namespace Geneal
                 generationalTotalCount.Points.AddXY(memberDuplicity.ElementAt(i).Key, Math.Pow(2, memberDuplicity.ElementAt(i).Key));
             }
 
-            Dictionary<int, double> generationalCompleteness = _stats.getGenerationalCompleteness(_family.Family);
-            for(int i = 0; i < generationalCompleteness.Keys.Count; i++)
-            {
-                generationalCompletenessSeries.Points.AddXY(generationalCompleteness.ElementAt(i).Key, Math.Round(generationalCompleteness.ElementAt(i).Value, 3));
-            }
+            _stats.getNameOccurences(ref this.occuranceChart);
+
+            _stats.getGenerationalCompleteness(ref this.generationalCompletenessChart);
 
             _stats.getCountryOccurences(false, ref this.countryOccuranceChart);
             _stats.getCountryOccurences(true, ref this.countryOccuranceChartExtended);
-            _stats.getCountByGenerationAndLocation(_family.Family, false, false, ref this.membersByGenerationAndLocation);
-            _stats.getCountByGenerationAndLocation(_family.Family, true, false, ref this.membersByGenerationAndLocation100);
-            _stats.getCountByGenerationAndLocation(_family.Family, true, true, ref this.membersByGenerationAndLocationExtended100);
 
-            this.occuranceChart.Invalidate();
+            _stats.getCountByGenerationAndLocation(_family, false, false, ref this.membersByGenerationAndLocation);
+            _stats.getCountByGenerationAndLocation(_family, true, false, ref this.membersByGenerationAndLocation100);
+            _stats.getCountByGenerationAndLocation(_family, true, true, ref this.membersByGenerationAndLocationExtended100);
+            
+            this.memberOccuranceChart.ChartAreas[0].RecalculateAxesScale();
+            this.generationUniqueCount.ChartAreas[0].RecalculateAxesScale();
+            
             this.memberOccuranceChart.Invalidate();
-            this.generationalCompletenessChart.Invalidate();
             this.generationUniqueCount.Invalidate();
         }
 
@@ -421,7 +408,7 @@ namespace Geneal
         private void showInfo(object sender, EventArgs e)
         {
             string memName = ((Label)sender).Name;
-            populateInfoPanel(_family.Family.Get(memName));
+            populateInfoPanel(_family.getMember(memName));
         }
 
         private void recenterTree(object sender, EventArgs e)
@@ -520,6 +507,10 @@ namespace Geneal
 
         private void searchResults_SelectedIndexChanged(object sender, EventArgs e)
         {
+            this.lblSearchGotoMap.Visible = true;
+            this.lblSearchGotoTree.Visible = true;
+            this.lblSetAsRoot.Visible = true;
+
             string member = (string)((ListBox)sender).SelectedItem;
             populateSearchInfoPanel(_family.getMember(member));
         }
@@ -527,8 +518,7 @@ namespace Geneal
         private void lblRefresh_Click(object sender, EventArgs e)
         {
             Preferences.Init();
-            _mapData = new Maps();
-            _family = new FamilyMembers(Preferences.DataSourceFile, _mapData);
+            _family.RefreshData();
             _stats = new FamilyStats(_family);
 
             this.currentMember = Preferences.RootUser;
@@ -538,8 +528,8 @@ namespace Geneal
 
         private void lblSetAsRoot_Click(object sender, EventArgs e)
         {
-            Preferences.RootUser = (string)((Label)sender).Tag;
-            _family.Init();
+            Preferences.SetRoot((string)((Label)sender).Tag);
+            _family.RefreshData();
             _stats = new FamilyStats(_family);
 
             this.currentMember = Preferences.RootUser;
@@ -548,6 +538,26 @@ namespace Geneal
 
             this.tabControl1.SelectedIndex = 0;
             populateInfoPanel(_family.getMember(this.currentMember));
+        }
+
+        private void btnOpenFile_Click(object sender, EventArgs e)
+        {
+            DialogResult result = this.dataFileSelect.ShowDialog();
+        }
+
+        private void dataFileSelect_FileOk(object sender, CancelEventArgs e)
+        {
+            string fileName = this.dataFileSelect.FileName;
+
+            _family.LoadFamilyFromFile(fileName);
+            _stats = new FamilyStats(_family);
+
+            this.InitFromData();
+        }
+
+        private void btnExportCurrent_Click(object sender, EventArgs e)
+        {            
+            _family.ExportCurrentFamily();
         }
     }
 }

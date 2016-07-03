@@ -137,8 +137,14 @@
             this.lblSearchMemberBirthPlace = new System.Windows.Forms.Label();
             this.lblSearchMemberDeathDate = new System.Windows.Forms.Label();
             this.searchMiscInfoBox = new System.Windows.Forms.ListBox();
+            this.optionsPage = new System.Windows.Forms.TabPage();
+            this.btnExportCurrent = new System.Windows.Forms.Button();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.btnOpenFile = new System.Windows.Forms.Button();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.dataFileSelect = new System.Windows.Forms.OpenFileDialog();
             this.tabControl1.SuspendLayout();
             this.treePage.SuspendLayout();
             this.infoPanel.SuspendLayout();
@@ -163,6 +169,7 @@
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.optionsPage.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -171,6 +178,7 @@
             this.tabControl1.Controls.Add(this.mapPage);
             this.tabControl1.Controls.Add(this.statsPage);
             this.tabControl1.Controls.Add(this.searchPage);
+            this.tabControl1.Controls.Add(this.optionsPage);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
@@ -219,11 +227,12 @@
             // 
             this.lblRefresh.AutoSize = true;
             this.lblRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.lblRefresh.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
+            this.lblRefresh.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.lblRefresh.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F);
             this.lblRefresh.ForeColor = System.Drawing.Color.MediumBlue;
-            this.lblRefresh.Location = new System.Drawing.Point(143, 12);
+            this.lblRefresh.Location = new System.Drawing.Point(10, 653);
             this.lblRefresh.Name = "lblRefresh";
-            this.lblRefresh.Size = new System.Drawing.Size(68, 20);
+            this.lblRefresh.Size = new System.Drawing.Size(55, 16);
             this.lblRefresh.TabIndex = 17;
             this.lblRefresh.Text = "Refresh";
             this.lblRefresh.Click += new System.EventHandler(this.lblRefresh_Click);
@@ -269,7 +278,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(13, 10);
+            this.label3.Location = new System.Drawing.Point(10, 10);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(124, 24);
             this.label3.TabIndex = 7;
@@ -279,7 +288,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(9, 267);
+            this.label2.Location = new System.Drawing.Point(13, 267);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(93, 24);
             this.label2.TabIndex = 6;
@@ -340,7 +349,7 @@
             // 
             this.lblMemerName.AutoSize = true;
             this.lblMemerName.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblMemerName.Location = new System.Drawing.Point(13, 55);
+            this.lblMemerName.Location = new System.Drawing.Point(12, 55);
             this.lblMemerName.Name = "lblMemerName";
             this.lblMemerName.Size = new System.Drawing.Size(71, 24);
             this.lblMemerName.TabIndex = 0;
@@ -555,7 +564,7 @@
             this.countryOccuranceChartExtended.TabIndex = 8;
             this.countryOccuranceChartExtended.Text = "chart1";
             title1.Name = "Title1";
-            title1.Text = "Top 10 Countries (Extrapolated)";
+            title1.Text = "Top 10 Regions (Extrapolated)";
             this.countryOccuranceChartExtended.Titles.Add(title1);
             // 
             // membersByGenerationAndLocation
@@ -571,7 +580,8 @@
             chartArea2.AxisY.Minimum = 0D;
             chartArea2.Name = "Members By Location And Generation";
             this.membersByGenerationAndLocation.ChartAreas.Add(chartArea2);
-            legend2.Enabled = false;
+            legend2.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
+            legend2.IsDockedInsideChartArea = false;
             legend2.Name = "Legend1";
             this.membersByGenerationAndLocation.Legends.Add(legend2);
             this.membersByGenerationAndLocation.Location = new System.Drawing.Point(10, 627);
@@ -582,11 +592,11 @@
             series2.Legend = "Legend1";
             series2.Name = "Series1";
             this.membersByGenerationAndLocation.Series.Add(series2);
-            this.membersByGenerationAndLocation.Size = new System.Drawing.Size(655, 300);
+            this.membersByGenerationAndLocation.Size = new System.Drawing.Size(655, 341);
             this.membersByGenerationAndLocation.TabIndex = 7;
             this.membersByGenerationAndLocation.Text = "chart1";
             title2.Name = "Members By Location And Generation";
-            title2.Text = "Members By Location And Generation";
+            title2.Text = "Members By Region And Generation";
             this.membersByGenerationAndLocation.Titles.Add(title2);
             // 
             // membersByGenerationAndLocationExtended100
@@ -603,7 +613,8 @@
             chartArea3.AxisY.Minimum = 0D;
             chartArea3.Name = "ChartArea1";
             this.membersByGenerationAndLocationExtended100.ChartAreas.Add(chartArea3);
-            legend3.Enabled = false;
+            legend3.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
+            legend3.IsDockedInsideChartArea = false;
             legend3.Name = "Legend1";
             this.membersByGenerationAndLocationExtended100.Legends.Add(legend3);
             this.membersByGenerationAndLocationExtended100.Location = new System.Drawing.Point(1332, 627);
@@ -614,11 +625,11 @@
             series3.Legend = "Legend1";
             series3.Name = "Series1";
             this.membersByGenerationAndLocationExtended100.Series.Add(series3);
-            this.membersByGenerationAndLocationExtended100.Size = new System.Drawing.Size(655, 300);
+            this.membersByGenerationAndLocationExtended100.Size = new System.Drawing.Size(655, 338);
             this.membersByGenerationAndLocationExtended100.TabIndex = 6;
             this.membersByGenerationAndLocationExtended100.Text = "chart1";
             title3.Name = "Members By Location And Generation (Normalized and Extended)";
-            title3.Text = "Members By Location And Generation (Normalized and Extrapolated)";
+            title3.Text = "Members By Region And Generation (Normalized and Extrapolated)";
             this.membersByGenerationAndLocationExtended100.Titles.Add(title3);
             // 
             // membersByGenerationAndLocation100
@@ -635,7 +646,8 @@
             chartArea4.AxisY.Minimum = 0D;
             chartArea4.Name = "Members By Location And Generation (Normalized)";
             this.membersByGenerationAndLocation100.ChartAreas.Add(chartArea4);
-            legend4.Enabled = false;
+            legend4.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
+            legend4.IsDockedInsideChartArea = false;
             legend4.Name = "Legend1";
             this.membersByGenerationAndLocation100.Legends.Add(legend4);
             this.membersByGenerationAndLocation100.Location = new System.Drawing.Point(671, 627);
@@ -646,11 +658,11 @@
             series4.Legend = "Legend1";
             series4.Name = "Series1";
             this.membersByGenerationAndLocation100.Series.Add(series4);
-            this.membersByGenerationAndLocation100.Size = new System.Drawing.Size(655, 300);
+            this.membersByGenerationAndLocation100.Size = new System.Drawing.Size(655, 338);
             this.membersByGenerationAndLocation100.TabIndex = 5;
             this.membersByGenerationAndLocation100.Text = "chart1";
             title4.Name = "Members By Location And Generation (Normalized)";
-            title4.Text = "Members By Location And Generation (Normalized to Generation Size)";
+            title4.Text = "Members By Region And Generation (Normalized to Generation Size)";
             this.membersByGenerationAndLocation100.Titles.Add(title4);
             // 
             // generationUniqueCount
@@ -690,6 +702,8 @@
             | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.LabelsAngleStep45) 
             | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.WordWrap)));
             chartArea6.AxisX.LabelStyle.Angle = -30;
+            chartArea6.AxisY.Maximum = 100D;
+            chartArea6.AxisY.Minimum = 0D;
             chartArea6.Name = "ChartArea1";
             this.generationalCompletenessChart.ChartAreas.Add(chartArea6);
             legend6.Enabled = false;
@@ -761,7 +775,7 @@
             this.countryOccuranceChart.TabIndex = 1;
             this.countryOccuranceChart.Text = "countryOccuranceChart";
             title8.Name = "Title1";
-            title8.Text = "Top 10 Countries";
+            title8.Text = "Top 10 Regions";
             this.countryOccuranceChart.Titles.Add(title8);
             // 
             // occuranceChart
@@ -1070,11 +1084,12 @@
             this.lblSetAsRoot.Cursor = System.Windows.Forms.Cursors.Hand;
             this.lblSetAsRoot.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
             this.lblSetAsRoot.ForeColor = System.Drawing.Color.Blue;
-            this.lblSetAsRoot.Location = new System.Drawing.Point(18, 347);
+            this.lblSetAsRoot.Location = new System.Drawing.Point(18, 350);
             this.lblSetAsRoot.Name = "lblSetAsRoot";
             this.lblSetAsRoot.Size = new System.Drawing.Size(99, 20);
             this.lblSetAsRoot.TabIndex = 17;
             this.lblSetAsRoot.Text = "Set As Root";
+            this.lblSetAsRoot.Visible = false;
             this.lblSetAsRoot.Click += new System.EventHandler(this.lblSetAsRoot_Click);
             // 
             // label15
@@ -1098,6 +1113,7 @@
             this.lblSearchGotoMap.Size = new System.Drawing.Size(98, 20);
             this.lblSearchGotoMap.TabIndex = 16;
             this.lblSearchGotoMap.Text = "See on Map";
+            this.lblSearchGotoMap.Visible = false;
             this.lblSearchGotoMap.Click += new System.EventHandler(this.lblGotoMap_Click);
             // 
             // lblSearchMemberName
@@ -1121,6 +1137,7 @@
             this.lblSearchGotoTree.Size = new System.Drawing.Size(100, 20);
             this.lblSearchGotoTree.TabIndex = 15;
             this.lblSearchGotoTree.Text = "See on Tree";
+            this.lblSearchGotoTree.Visible = false;
             this.lblSearchGotoTree.Click += new System.EventHandler(this.lblGotoTree_Click);
             // 
             // lblSearchMemberBirthDate
@@ -1175,11 +1192,68 @@
             this.searchMiscInfoBox.Size = new System.Drawing.Size(482, 707);
             this.searchMiscInfoBox.TabIndex = 0;
             // 
+            // optionsPage
+            // 
+            this.optionsPage.Controls.Add(this.btnExportCurrent);
+            this.optionsPage.Controls.Add(this.label16);
+            this.optionsPage.Controls.Add(this.label14);
+            this.optionsPage.Controls.Add(this.btnOpenFile);
+            this.optionsPage.Location = new System.Drawing.Point(4, 25);
+            this.optionsPage.Name = "optionsPage";
+            this.optionsPage.Padding = new System.Windows.Forms.Padding(3);
+            this.optionsPage.Size = new System.Drawing.Size(1320, 713);
+            this.optionsPage.TabIndex = 4;
+            this.optionsPage.Text = "Options";
+            this.optionsPage.UseVisualStyleBackColor = true;
+            // 
+            // btnExportCurrent
+            // 
+            this.btnExportCurrent.Location = new System.Drawing.Point(164, 62);
+            this.btnExportCurrent.Name = "btnExportCurrent";
+            this.btnExportCurrent.Size = new System.Drawing.Size(90, 27);
+            this.btnExportCurrent.TabIndex = 3;
+            this.btnExportCurrent.Text = "Export";
+            this.btnExportCurrent.UseVisualStyleBackColor = true;
+            this.btnExportCurrent.Click += new System.EventHandler(this.btnExportCurrent_Click);
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(15, 67);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(143, 17);
+            this.label16.TabIndex = 2;
+            this.label16.Text = "Export Current Family";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(15, 15);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(189, 17);
+            this.label14.TabIndex = 1;
+            this.label14.Text = "Select Raw Data File (JSON)";
+            // 
+            // btnOpenFile
+            // 
+            this.btnOpenFile.Location = new System.Drawing.Point(210, 11);
+            this.btnOpenFile.Name = "btnOpenFile";
+            this.btnOpenFile.Size = new System.Drawing.Size(90, 27);
+            this.btnOpenFile.TabIndex = 0;
+            this.btnOpenFile.Text = "Select File";
+            this.btnOpenFile.UseVisualStyleBackColor = true;
+            this.btnOpenFile.Click += new System.EventHandler(this.btnOpenFile_Click);
+            // 
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(67, 4);
+            // 
+            // dataFileSelect
+            // 
+            this.dataFileSelect.FileName = "DataFile";
+            this.dataFileSelect.FileOk += new System.ComponentModel.CancelEventHandler(this.dataFileSelect_FileOk);
             // 
             // AppMain
             // 
@@ -1220,6 +1294,8 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.optionsPage.ResumeLayout(false);
+            this.optionsPage.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1299,6 +1375,12 @@
         private System.Windows.Forms.Label lblRefresh;
         private System.Windows.Forms.Label lblSetAsRoot;
         private System.Windows.Forms.DataVisualization.Charting.Chart countryOccuranceChartExtended;
+        private System.Windows.Forms.TabPage optionsPage;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Button btnOpenFile;
+        private System.Windows.Forms.OpenFileDialog dataFileSelect;
+        private System.Windows.Forms.Button btnExportCurrent;
+        private System.Windows.Forms.Label label16;
     }
 }
 

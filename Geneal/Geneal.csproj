@@ -82,7 +82,6 @@
     <Compile Include="FamilyStats.cs" />
     <Compile Include="Maps.cs" />
     <Compile Include="Member.cs" />
-    <Compile Include="MemberCollection.cs" />
     <Compile Include="Preferences.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

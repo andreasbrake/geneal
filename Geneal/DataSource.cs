@@ -12,19 +12,17 @@ namespace Geneal
     public class DataSource
     {
         private Maps _mapData;
-        private MemberCollection _members;
+        private List<Member> _members;
         private static string CACHE_PATH = Directory.GetCurrentDirectory() + @"\locations.dat";
+        private static string DATA_PATH = Directory.GetCurrentDirectory() + @"\family.bin";
+        private static string DATA_EXPORT_PATH = Directory.GetCurrentDirectory() + @"\family_export.bin";
 
-        public DataSource(string source, string sourceName, Maps map)
+        public DataSource(Maps map)
         {
             this._mapData = map;
 
-            if (source == "JSON")
-            {
-                LoadJsonFile(sourceName);
-            }
+            this.LoadDataFile();
 
-            
             if (File.Exists(CACHE_PATH))
             {
                 loadLocationCache(CACHE_PATH);
@@ -35,14 +33,50 @@ namespace Geneal
             }
         }
 
-        public MemberCollection getMembers()
+        public List<Member> getMembers()
         {
             return this._members;
         }
 
-        private void LoadJsonFile(string filename)
+        public void LoadDataFile()
         {
-            string filepath = Directory.GetCurrentDirectory() + @"\" + filename;
+            if(!File.Exists(DATA_PATH))
+            {
+                this._members = new List<Member>();
+                return;
+            }
+
+            //deserialize
+            using (Stream stream = File.Open(DATA_PATH, FileMode.Open))
+            {
+                var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                this._members = (List<Member>)bformatter.Deserialize(stream);
+            }
+        }
+        public void WriteToDataFile()
+        {
+            //serialize
+            using (Stream stream = File.Open(DATA_PATH, FileMode.Create))
+            {
+                var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                bformatter.Serialize(stream, _members);
+            }
+        }
+        public void WriteCurrentToDataFile()
+        {
+            List<Member> current = (from m in _members
+                                    where m.Generation >= 0
+                                    select m).ToList();
+            //serialize
+            using (Stream stream = File.Open(DATA_EXPORT_PATH, FileMode.Create))
+            {
+                var bformatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                bformatter.Serialize(stream, current);
+            }
+        }
+
+        public void LoadJsonFile(string filepath)
+        {
             string[] lines = System.IO.File.ReadAllLines(filepath);
 
             Dictionary<string, List<string>> rawMembers = new Dictionary<string, List<string>>();
@@ -114,9 +148,9 @@ namespace Geneal
             this._members = parseMemberList(rawMembers);
         }
 
-        private MemberCollection parseMemberList(Dictionary<string, List<string>>  data)
+        private List<Member> parseMemberList(Dictionary<string, List<string>>  data)
         {
-            ArrayList members = new ArrayList();
+            List<Member> members = new List<Member>();
             foreach (KeyValuePair<string, List<string>> rawFamilies in data)
             {
                 string familyName = rawFamilies.Key;
@@ -128,6 +162,7 @@ namespace Geneal
 
                     string firstName = Regex.Match(memberString, "(?<='name':')[^']*").Value.ToString();
                     string birthData = Regex.Match(memberString, "(?<='birth':\\[)[^\\]]*").Value.ToString();
+                    string birthRegion = Regex.Match(memberString, "(?<='birthRegion':')[^']*").Value.ToString();
                     string deathData = Regex.Match(memberString, "(?<='death':\\[)[^\\]]*").Value.ToString();
                     string parentsData = Regex.Match(memberString, "(?<='parents':\\[)[^\\]]*").Value.ToString();
                     string miscData = Regex.Match(memberString, "(?<='misc':\\{)[^//}]*").Value.ToString();
@@ -138,6 +173,8 @@ namespace Geneal
                         birthDate = new string[3] { "", "", "" };
                     }
                     member.BirthLocation = Regex.Match(birthData, "(?<=,')[^']*").Value.ToString();
+
+                    member.BirthRegion = birthRegion != "" ? birthRegion.ToUpper().Trim() : null;
 
                     int birthYear = Int32.TryParse(birthDate[0], out birthYear) ? birthYear : 1;
                     int birthMonth = Int32.TryParse(birthDate[1], out birthMonth) ? birthMonth : 1;
@@ -192,7 +229,7 @@ namespace Geneal
                 }
             }
 
-            return new MemberCollection(members);
+            return members;
         }
 
         private void loadLocationCache(string filepath)
