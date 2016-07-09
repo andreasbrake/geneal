@@ -65,7 +65,7 @@ namespace Geneal
         public void WriteCurrentToDataFile()
         {
             List<Member> current = (from m in _members
-                                    where m.Generation >= 0
+                                    where m.Generations.Count > 0
                                     select m).ToList();
             //serialize
             using (Stream stream = File.Open(DATA_EXPORT_PATH, FileMode.Create))
@@ -221,10 +221,7 @@ namespace Geneal
                             member.MiscInfo[miscKVs[j].Groups[1].Value] += ". " + miscKVs[j].Groups[2].Value;
                         }
                     }
-
-                    member.Generation = -1;
-                    member.GenerationIndex = -1;
-
+                    
                     members.Add(member);
                 }
             }

@@ -29,7 +29,7 @@ namespace Geneal
 
             List<Member> members = family.getLiving(year);
 
-            for(int i=0; i < members.Count; i++)
+            for (int i=0; i < members.Count; i++)
             {
                 Tuple<double, double> loc = this.lookupLocation(members[i].BirthLocation);
 

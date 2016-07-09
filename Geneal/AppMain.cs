@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
@@ -56,10 +57,8 @@ namespace Geneal
             this.treePanel.Width = (int)Math.Round(this.Width * 0.75f - (this.treePanel.VerticalScroll.Visible ? 25 : 0) - 25);
             this.infoPanel.Width = (int)Math.Round(this.Width * 0.25f);
 
-            createStats();
-
-            Dictionary<string, double> history = _stats.getHistoricalLocations(_family.getMember(Preferences.RootUser));
-
+            createStats_Background();
+            
             setListData();
 
             // Search box
@@ -78,6 +77,7 @@ namespace Geneal
             gMap.Position = new PointLatLng(46.2276, 2.2137);
 
             GMapOverlay markersOverlay = new GMapOverlay("marker");
+            gMap.Overlays.Clear();
             gMap.Overlays.Add(markersOverlay);
             gMap.OnMarkerClick += new MarkerClick(this.gMap_MarkerClick);
 
@@ -93,6 +93,7 @@ namespace Geneal
             int birthYear1 = -1;
             int birthYear2 = -1;
             string birthLocation = birthLocationSearch.Text.Trim().ToUpper();
+            string birthRegion = birthRegionSearch.Text.Trim().ToUpper();
             int deathYear1 = -1;
             int deathYear2 = -1;
             string deathLocation = deathLocationSearch.Text.Trim().ToUpper();
@@ -121,6 +122,7 @@ namespace Geneal
                     birthYear1,
                     birthYear2,
                     birthLocation,
+                    birthRegion,
                     deathYear1,
                     deathYear2,
                     deathLocation
@@ -128,30 +130,19 @@ namespace Geneal
             );
         }
 
+        private void createStats_Background()
+        {
+            //ThreadStart work = createStats;
+            //Thread thread = new Thread(work);
+            // thread.Start();
+
+            createStats();
+        }
+
         private void createStats()
         {
-            this.memberOccuranceChart.Series.Clear();
-            this.generationUniqueCount.Series.Clear();
-            this.generationUniqueCount.Series.Clear();
-
-            Series memberOccuranceSeries = new Series { Name = "Occurance", Color = System.Drawing.Color.Blue, ChartType = SeriesChartType.Column, XValueType = ChartValueType.String, ToolTip = "#VALY" };
-            Series generationalUniqueCount = new Series { Name = "Occurance", Color = System.Drawing.Color.Blue, ChartType = SeriesChartType.Column, XValueType = ChartValueType.Int32, ToolTip = "#VALY" };
-            Series generationalTotalCount = new Series { Name = "Occurance2", Color = System.Drawing.Color.Green, ChartType = SeriesChartType.Line, XValueType = ChartValueType.Int32, ToolTip = "#VALY" };
-            
-            this.memberOccuranceChart.Series.Add(memberOccuranceSeries);
-            this.generationUniqueCount.Series.Add(generationalUniqueCount);
-            this.generationUniqueCount.Series.Add(generationalTotalCount);
-
-            Dictionary<int, double> memberDuplicity = _stats.getHistoricalDuplicity();
-            for (int i = 0; i < memberDuplicity.Keys.Count; i++)
-            {
-                memberOccuranceSeries.Points.AddXY(memberDuplicity.ElementAt(i).Key, memberDuplicity.ElementAt(i).Value);
-            }
-            for (int i = 0; i < memberDuplicity.Keys.Count; i++)
-            {
-                generationalUniqueCount.Points.AddXY(memberDuplicity.ElementAt(i).Key, Math.Pow(2, memberDuplicity.ElementAt(i).Key) / memberDuplicity.ElementAt(i).Value);
-                generationalTotalCount.Points.AddXY(memberDuplicity.ElementAt(i).Key, Math.Pow(2, memberDuplicity.ElementAt(i).Key));
-            }
+            _stats.getHistoricalDuplicity(ref this.memberOccuranceChart, ref this.generationUniqueCount);
+            _stats.getAverageDuplicityByYear(25, ref this.memberOccuranceChart2);
 
             _stats.getNameOccurences(ref this.occuranceChart);
 
@@ -163,16 +154,20 @@ namespace Geneal
             _stats.getCountByGenerationAndLocation(_family, false, false, ref this.membersByGenerationAndLocation);
             _stats.getCountByGenerationAndLocation(_family, true, false, ref this.membersByGenerationAndLocation100);
             _stats.getCountByGenerationAndLocation(_family, true, true, ref this.membersByGenerationAndLocationExtended100);
-            
-            this.memberOccuranceChart.ChartAreas[0].RecalculateAxesScale();
-            this.generationUniqueCount.ChartAreas[0].RecalculateAxesScale();
-            
-            this.memberOccuranceChart.Invalidate();
-            this.generationUniqueCount.Invalidate();
+
+            _stats.getAverageGenerationYear(ref this.generationAverageYearChart);
+            _stats.getAverageAgeByBirthYear(25, ref this.averageMemberAge);
         }
 
         private void createTree(string memberName)
         {
+            if(memberName == null)
+            {
+                return;
+            }
+
+            this.drawMinimap_Background();
+
             float WINDOW_HEIGHT = treePage.Height - 50;
             float MAX_RECT_HEIGHT = 20;
             float MAX_RECT_WIDTH = 150;
@@ -235,9 +230,19 @@ namespace Geneal
 
         private void populateInfoPanel(Member memInfo)
         {
+            if (memInfo == null)
+            {
+                return;
+            }
+
             lblMemerName.Text = "Name: " + parseName(memInfo.Name);
 
-            lblMemberPosition.Text = "Position: (" + memInfo.Generation + "," + memInfo.GenerationIndex + ")";
+            lblMemberPosition.Text = "Position: ";
+
+            for (int i=0; i < memInfo.Generations.Count; i++)
+            {
+                lblMemberPosition.Text += "(" + memInfo.Generations[i].Depth + "," + memInfo.Generations[i].Breadth + ")";
+            }
 
             lblMemberBirthDate.Text = "Birth Date: " + parseDate(memInfo.BirthDate);
             lblMemberBirthPlace.Text = "Birth Place: " + parseLocation(memInfo.BirthLocation);
@@ -287,6 +292,11 @@ namespace Geneal
 
         private void populateMapInfoPanel(Member mem)
         {
+            if (mem == null)
+            {
+                return;
+            }
+
             lblMarkerName.Text = "Name: " + parseName(mem.Name);
             lblMarkerBirthDate.Text = "Birth Date: " + parseDate(mem.BirthDate);
             lblMarkerBirthPlace.Text = "Birth Place: " + parseLocation(mem.BirthLocation);
@@ -298,6 +308,11 @@ namespace Geneal
 
         private void populateSearchInfoPanel(Member mem)
         {
+            if(mem == null)
+            {
+                return;
+            }
+
             lblSearchMemberName.Text = "Name: " + parseName(mem.Name);
             
             lblSearchMemberBirthDate.Text = "Birth Date: " + parseDate(mem.BirthDate);
@@ -391,6 +406,29 @@ namespace Geneal
             }
 
             return String.Join(", ", parsedParts.ToArray());
+        }
+
+        private void drawMinimap_Background()
+        {
+            ThreadStart work = drawMinimap;
+            Thread thread = new Thread(work);
+            thread.Start();
+        }
+        private void drawMinimap()
+        {
+            int currHeight = this.minimap.Size.Height;
+
+            int nearestBase = (int)Math.Round(Math.Log(currHeight, 2));
+            int newHeight = (int)Math.Pow(2, nearestBase);//(imgHeight / 64) * 64;
+            this.minimap.Height = newHeight;
+
+            Bitmap miniTreeBitmap = new Bitmap(this.minimap.Size.Width, newHeight);
+
+            Graphics minimapGraphics = Graphics.FromImage(miniTreeBitmap);
+            
+            _family.drawToBitmap(minimapGraphics, this.minimap.Size.Width, newHeight, _family.getMember(this.currentMember));
+            
+            this.minimap.Image = miniTreeBitmap;
         }
 
         // EVENT HANDLERS
@@ -500,7 +538,7 @@ namespace Geneal
             createTree(Preferences.RootUser);
         }
 
-        private void keyUpdateSearch(object sender, KeyEventArgs e)
+        private void textUpdateSearch(object sender, EventArgs e)
         {
             setListData();
         }

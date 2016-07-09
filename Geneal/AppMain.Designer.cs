@@ -65,10 +65,23 @@
             System.Windows.Forms.DataVisualization.Charting.Legend legend9 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series9 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.Windows.Forms.DataVisualization.Charting.Title title9 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea10 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend10 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series10 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Title title10 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea11 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend11 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series11 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Title title11 = new System.Windows.Forms.DataVisualization.Charting.Title();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea12 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend12 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series12 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Title title12 = new System.Windows.Forms.DataVisualization.Charting.Title();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AppMain));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.treePage = new System.Windows.Forms.TabPage();
             this.infoPanel = new System.Windows.Forms.Panel();
+            this.minimap = new System.Windows.Forms.PictureBox();
             this.lblRefresh = new System.Windows.Forms.Label();
             this.lblGotoRoot = new System.Windows.Forms.Label();
             this.lblGotoMap = new System.Windows.Forms.Label();
@@ -95,6 +108,9 @@
             this.lblCurrentYear = new System.Windows.Forms.Label();
             this.gMap = new GMap.NET.WindowsForms.GMapControl();
             this.statsPage = new System.Windows.Forms.TabPage();
+            this.averageMemberAge = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.memberOccuranceChart2 = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.generationAverageYearChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.countryOccuranceChartExtended = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.membersByGenerationAndLocation = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.membersByGenerationAndLocationExtended100 = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -108,6 +124,8 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.searchResults = new System.Windows.Forms.ListBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.birthRegionSearch = new System.Windows.Forms.TextBox();
+            this.label17 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.nameLastSearch = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
@@ -148,10 +166,14 @@
             this.tabControl1.SuspendLayout();
             this.treePage.SuspendLayout();
             this.infoPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.minimap)).BeginInit();
             this.mapPage.SuspendLayout();
             this.pnlMarkerInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.yearRange)).BeginInit();
             this.statsPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.averageMemberAge)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.memberOccuranceChart2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.generationAverageYearChart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.countryOccuranceChartExtended)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.membersByGenerationAndLocation)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.membersByGenerationAndLocationExtended100)).BeginInit();
@@ -184,7 +206,7 @@
             this.tabControl1.Margin = new System.Windows.Forms.Padding(0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1328, 742);
+            this.tabControl1.Size = new System.Drawing.Size(1448, 755);
             this.tabControl1.TabIndex = 0;
             // 
             // treePage
@@ -195,7 +217,7 @@
             this.treePage.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.treePage.Location = new System.Drawing.Point(4, 25);
             this.treePage.Name = "treePage";
-            this.treePage.Size = new System.Drawing.Size(1320, 713);
+            this.treePage.Size = new System.Drawing.Size(1440, 726);
             this.treePage.TabIndex = 0;
             this.treePage.Text = "Family Tree";
             // 
@@ -203,6 +225,7 @@
             // 
             this.infoPanel.AutoScroll = true;
             this.infoPanel.BackColor = System.Drawing.Color.Gainsboro;
+            this.infoPanel.Controls.Add(this.minimap);
             this.infoPanel.Controls.Add(this.lblRefresh);
             this.infoPanel.Controls.Add(this.lblGotoRoot);
             this.infoPanel.Controls.Add(this.lblGotoMap);
@@ -216,12 +239,22 @@
             this.infoPanel.Controls.Add(this.lblMemberDeathDate);
             this.infoPanel.Controls.Add(this.lblMemerName);
             this.infoPanel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.infoPanel.Location = new System.Drawing.Point(1051, 0);
+            this.infoPanel.Location = new System.Drawing.Point(1171, 0);
             this.infoPanel.Margin = new System.Windows.Forms.Padding(0);
             this.infoPanel.Name = "infoPanel";
             this.infoPanel.Padding = new System.Windows.Forms.Padding(10);
-            this.infoPanel.Size = new System.Drawing.Size(269, 713);
+            this.infoPanel.Size = new System.Drawing.Size(269, 726);
             this.infoPanel.TabIndex = 2;
+            // 
+            // minimap
+            // 
+            this.minimap.BackColor = System.Drawing.Color.White;
+            this.minimap.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.minimap.Location = new System.Drawing.Point(10, 312);
+            this.minimap.Name = "minimap";
+            this.minimap.Size = new System.Drawing.Size(249, 354);
+            this.minimap.TabIndex = 0;
+            this.minimap.TabStop = false;
             // 
             // lblRefresh
             // 
@@ -230,7 +263,7 @@
             this.lblRefresh.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.lblRefresh.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.5F);
             this.lblRefresh.ForeColor = System.Drawing.Color.MediumBlue;
-            this.lblRefresh.Location = new System.Drawing.Point(10, 653);
+            this.lblRefresh.Location = new System.Drawing.Point(10, 666);
             this.lblRefresh.Name = "lblRefresh";
             this.lblRefresh.Size = new System.Drawing.Size(55, 16);
             this.lblRefresh.TabIndex = 17;
@@ -244,7 +277,7 @@
             this.lblGotoRoot.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.lblGotoRoot.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F);
             this.lblGotoRoot.ForeColor = System.Drawing.Color.MediumBlue;
-            this.lblGotoRoot.Location = new System.Drawing.Point(10, 669);
+            this.lblGotoRoot.Location = new System.Drawing.Point(10, 682);
             this.lblGotoRoot.Name = "lblGotoRoot";
             this.lblGotoRoot.Size = new System.Drawing.Size(96, 17);
             this.lblGotoRoot.TabIndex = 16;
@@ -298,7 +331,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.label1.Location = new System.Drawing.Point(10, 686);
+            this.label1.Location = new System.Drawing.Point(10, 699);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(238, 17);
             this.label1.TabIndex = 5;
@@ -363,7 +396,7 @@
             this.treePanel.Location = new System.Drawing.Point(0, 0);
             this.treePanel.Margin = new System.Windows.Forms.Padding(0);
             this.treePanel.Name = "treePanel";
-            this.treePanel.Size = new System.Drawing.Size(1053, 713);
+            this.treePanel.Size = new System.Drawing.Size(1053, 726);
             this.treePanel.TabIndex = 3;
             this.treePanel.Paint += new System.Windows.Forms.PaintEventHandler(this.treePanel_Paint);
             // 
@@ -373,7 +406,7 @@
             this.mapPage.Controls.Add(this.gMap);
             this.mapPage.Location = new System.Drawing.Point(4, 25);
             this.mapPage.Name = "mapPage";
-            this.mapPage.Size = new System.Drawing.Size(1320, 713);
+            this.mapPage.Size = new System.Drawing.Size(1440, 726);
             this.mapPage.TabIndex = 1;
             this.mapPage.Text = "Location Map";
             this.mapPage.UseVisualStyleBackColor = true;
@@ -391,9 +424,9 @@
             this.pnlMarkerInfo.Controls.Add(this.yearRange);
             this.pnlMarkerInfo.Controls.Add(this.lblCurrentYear);
             this.pnlMarkerInfo.Dock = System.Windows.Forms.DockStyle.Right;
-            this.pnlMarkerInfo.Location = new System.Drawing.Point(1061, 0);
+            this.pnlMarkerInfo.Location = new System.Drawing.Point(1181, 0);
             this.pnlMarkerInfo.Name = "pnlMarkerInfo";
-            this.pnlMarkerInfo.Size = new System.Drawing.Size(259, 713);
+            this.pnlMarkerInfo.Size = new System.Drawing.Size(259, 726);
             this.pnlMarkerInfo.TabIndex = 3;
             // 
             // lblGotoTree
@@ -477,7 +510,7 @@
             this.yearRange.Margin = new System.Windows.Forms.Padding(0);
             this.yearRange.Name = "yearRange";
             this.yearRange.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.yearRange.Size = new System.Drawing.Size(56, 693);
+            this.yearRange.Size = new System.Drawing.Size(56, 706);
             this.yearRange.TabIndex = 1;
             this.yearRange.TickFrequency = 5;
             this.yearRange.ValueChanged += new System.EventHandler(this.yearRange_ValueChanged);
@@ -516,13 +549,16 @@
             this.gMap.ScaleMode = GMap.NET.WindowsForms.ScaleModes.Integer;
             this.gMap.SelectedAreaFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(65)))), ((int)(((byte)(105)))), ((int)(((byte)(225)))));
             this.gMap.ShowTileGridLines = false;
-            this.gMap.Size = new System.Drawing.Size(1320, 713);
+            this.gMap.Size = new System.Drawing.Size(1440, 726);
             this.gMap.TabIndex = 0;
             this.gMap.Zoom = 3D;
             // 
             // statsPage
             // 
             this.statsPage.AutoScroll = true;
+            this.statsPage.Controls.Add(this.averageMemberAge);
+            this.statsPage.Controls.Add(this.memberOccuranceChart2);
+            this.statsPage.Controls.Add(this.generationAverageYearChart);
             this.statsPage.Controls.Add(this.countryOccuranceChartExtended);
             this.statsPage.Controls.Add(this.membersByGenerationAndLocation);
             this.statsPage.Controls.Add(this.membersByGenerationAndLocationExtended100);
@@ -535,12 +571,12 @@
             this.statsPage.Location = new System.Drawing.Point(4, 25);
             this.statsPage.Name = "statsPage";
             this.statsPage.Padding = new System.Windows.Forms.Padding(3);
-            this.statsPage.Size = new System.Drawing.Size(1320, 713);
+            this.statsPage.Size = new System.Drawing.Size(1440, 726);
             this.statsPage.TabIndex = 2;
             this.statsPage.Text = "Family Stats";
             this.statsPage.UseVisualStyleBackColor = true;
             // 
-            // countryOccuranceChartExtended
+            // averageMemberAge
             // 
             chartArea1.AxisX.Interval = 1D;
             chartArea1.AxisX.IsLabelAutoFit = false;
@@ -550,24 +586,24 @@
             | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.WordWrap)));
             chartArea1.AxisX.LabelStyle.Angle = -30;
             chartArea1.Name = "ChartArea1";
-            this.countryOccuranceChartExtended.ChartAreas.Add(chartArea1);
+            this.averageMemberAge.ChartAreas.Add(chartArea1);
             legend1.Enabled = false;
             legend1.Name = "Legend1";
-            this.countryOccuranceChartExtended.Legends.Add(legend1);
-            this.countryOccuranceChartExtended.Location = new System.Drawing.Point(1332, 15);
-            this.countryOccuranceChartExtended.Name = "countryOccuranceChartExtended";
+            this.averageMemberAge.Legends.Add(legend1);
+            this.averageMemberAge.Location = new System.Drawing.Point(1332, 627);
+            this.averageMemberAge.Name = "averageMemberAge";
             series1.ChartArea = "ChartArea1";
             series1.Legend = "Legend1";
             series1.Name = "Series1";
-            this.countryOccuranceChartExtended.Series.Add(series1);
-            this.countryOccuranceChartExtended.Size = new System.Drawing.Size(655, 300);
-            this.countryOccuranceChartExtended.TabIndex = 8;
-            this.countryOccuranceChartExtended.Text = "chart1";
+            this.averageMemberAge.Series.Add(series1);
+            this.averageMemberAge.Size = new System.Drawing.Size(655, 300);
+            this.averageMemberAge.TabIndex = 11;
+            this.averageMemberAge.Text = "chart1";
             title1.Name = "Title1";
-            title1.Text = "Top 10 Regions (Extrapolated)";
-            this.countryOccuranceChartExtended.Titles.Add(title1);
+            title1.Text = "Average Age by Birth Year (Grouped to 25 Years)";
+            this.averageMemberAge.Titles.Add(title1);
             // 
-            // membersByGenerationAndLocation
+            // memberOccuranceChart2
             // 
             chartArea2.AxisX.Interval = 1D;
             chartArea2.AxisX.IsLabelAutoFit = false;
@@ -576,30 +612,25 @@
             | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.LabelsAngleStep45) 
             | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.WordWrap)));
             chartArea2.AxisX.LabelStyle.Angle = -30;
-            chartArea2.AxisX.Minimum = 0D;
-            chartArea2.AxisY.Minimum = 0D;
-            chartArea2.Name = "Members By Location And Generation";
-            this.membersByGenerationAndLocation.ChartAreas.Add(chartArea2);
-            legend2.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
-            legend2.IsDockedInsideChartArea = false;
+            chartArea2.Name = "ChartArea1";
+            this.memberOccuranceChart2.ChartAreas.Add(chartArea2);
+            legend2.Enabled = false;
             legend2.Name = "Legend1";
-            this.membersByGenerationAndLocation.Legends.Add(legend2);
-            this.membersByGenerationAndLocation.Location = new System.Drawing.Point(10, 627);
-            this.membersByGenerationAndLocation.Name = "membersByGenerationAndLocation";
-            series2.ChartArea = "Members By Location And Generation";
-            series2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            series2.LabelAngle = 45;
+            this.memberOccuranceChart2.Legends.Add(legend2);
+            this.memberOccuranceChart2.Location = new System.Drawing.Point(671, 618);
+            this.memberOccuranceChart2.Name = "memberOccuranceChart2";
+            series2.ChartArea = "ChartArea1";
             series2.Legend = "Legend1";
             series2.Name = "Series1";
-            this.membersByGenerationAndLocation.Series.Add(series2);
-            this.membersByGenerationAndLocation.Size = new System.Drawing.Size(655, 341);
-            this.membersByGenerationAndLocation.TabIndex = 7;
-            this.membersByGenerationAndLocation.Text = "chart1";
-            title2.Name = "Members By Location And Generation";
-            title2.Text = "Members By Region And Generation";
-            this.membersByGenerationAndLocation.Titles.Add(title2);
+            this.memberOccuranceChart2.Series.Add(series2);
+            this.memberOccuranceChart2.Size = new System.Drawing.Size(655, 300);
+            this.memberOccuranceChart2.TabIndex = 10;
+            this.memberOccuranceChart2.Text = "chart1";
+            title2.Name = "Title1";
+            title2.Text = "Birth Year Duplicity (Grouped to 25 Years)";
+            this.memberOccuranceChart2.Titles.Add(title2);
             // 
-            // membersByGenerationAndLocationExtended100
+            // generationAverageYearChart
             // 
             chartArea3.AxisX.Interval = 1D;
             chartArea3.AxisX.IsLabelAutoFit = false;
@@ -608,31 +639,28 @@
             | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.LabelsAngleStep45) 
             | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.WordWrap)));
             chartArea3.AxisX.LabelStyle.Angle = -30;
-            chartArea3.AxisX.Minimum = 0D;
-            chartArea3.AxisY.Maximum = 100D;
-            chartArea3.AxisY.Minimum = 0D;
+            chartArea3.AxisY.IsStartedFromZero = false;
             chartArea3.Name = "ChartArea1";
-            this.membersByGenerationAndLocationExtended100.ChartAreas.Add(chartArea3);
-            legend3.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
-            legend3.IsDockedInsideChartArea = false;
+            this.generationAverageYearChart.ChartAreas.Add(chartArea3);
+            legend3.Enabled = false;
             legend3.Name = "Legend1";
-            this.membersByGenerationAndLocationExtended100.Legends.Add(legend3);
-            this.membersByGenerationAndLocationExtended100.Location = new System.Drawing.Point(1332, 627);
-            this.membersByGenerationAndLocationExtended100.Name = "membersByGenerationAndLocationExtended100";
+            this.generationAverageYearChart.Legends.Add(legend3);
+            this.generationAverageYearChart.Location = new System.Drawing.Point(8, 618);
+            this.generationAverageYearChart.Name = "generationAverageYearChart";
             series3.ChartArea = "ChartArea1";
             series3.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             series3.LabelAngle = 45;
             series3.Legend = "Legend1";
             series3.Name = "Series1";
-            this.membersByGenerationAndLocationExtended100.Series.Add(series3);
-            this.membersByGenerationAndLocationExtended100.Size = new System.Drawing.Size(655, 338);
-            this.membersByGenerationAndLocationExtended100.TabIndex = 6;
-            this.membersByGenerationAndLocationExtended100.Text = "chart1";
-            title3.Name = "Members By Location And Generation (Normalized and Extended)";
-            title3.Text = "Members By Region And Generation (Normalized and Extrapolated)";
-            this.membersByGenerationAndLocationExtended100.Titles.Add(title3);
+            this.generationAverageYearChart.Series.Add(series3);
+            this.generationAverageYearChart.Size = new System.Drawing.Size(655, 300);
+            this.generationAverageYearChart.TabIndex = 9;
+            this.generationAverageYearChart.Text = "generationAverageYearChart";
+            title3.Name = "Title1";
+            title3.Text = "Average Birth Year by Generation";
+            this.generationAverageYearChart.Titles.Add(title3);
             // 
-            // membersByGenerationAndLocation100
+            // countryOccuranceChartExtended
             // 
             chartArea4.AxisX.Interval = 1D;
             chartArea4.AxisX.IsLabelAutoFit = false;
@@ -641,31 +669,25 @@
             | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.LabelsAngleStep45) 
             | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.WordWrap)));
             chartArea4.AxisX.LabelStyle.Angle = -30;
-            chartArea4.AxisX.Minimum = 0D;
-            chartArea4.AxisY.Maximum = 100D;
-            chartArea4.AxisY.Minimum = 0D;
-            chartArea4.Name = "Members By Location And Generation (Normalized)";
-            this.membersByGenerationAndLocation100.ChartAreas.Add(chartArea4);
-            legend4.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
-            legend4.IsDockedInsideChartArea = false;
+            chartArea4.Name = "ChartArea1";
+            this.countryOccuranceChartExtended.ChartAreas.Add(chartArea4);
+            legend4.Enabled = false;
             legend4.Name = "Legend1";
-            this.membersByGenerationAndLocation100.Legends.Add(legend4);
-            this.membersByGenerationAndLocation100.Location = new System.Drawing.Point(671, 627);
-            this.membersByGenerationAndLocation100.Name = "membersByGenerationAndLocation100";
-            series4.ChartArea = "Members By Location And Generation (Normalized)";
-            series4.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            series4.LabelAngle = 45;
+            this.countryOccuranceChartExtended.Legends.Add(legend4);
+            this.countryOccuranceChartExtended.Location = new System.Drawing.Point(1332, 15);
+            this.countryOccuranceChartExtended.Name = "countryOccuranceChartExtended";
+            series4.ChartArea = "ChartArea1";
             series4.Legend = "Legend1";
             series4.Name = "Series1";
-            this.membersByGenerationAndLocation100.Series.Add(series4);
-            this.membersByGenerationAndLocation100.Size = new System.Drawing.Size(655, 338);
-            this.membersByGenerationAndLocation100.TabIndex = 5;
-            this.membersByGenerationAndLocation100.Text = "chart1";
-            title4.Name = "Members By Location And Generation (Normalized)";
-            title4.Text = "Members By Region And Generation (Normalized to Generation Size)";
-            this.membersByGenerationAndLocation100.Titles.Add(title4);
+            this.countryOccuranceChartExtended.Series.Add(series4);
+            this.countryOccuranceChartExtended.Size = new System.Drawing.Size(655, 300);
+            this.countryOccuranceChartExtended.TabIndex = 8;
+            this.countryOccuranceChartExtended.Text = "chart1";
+            title4.Name = "Title1";
+            title4.Text = "Top 10 Regions (Extrapolated)";
+            this.countryOccuranceChartExtended.Titles.Add(title4);
             // 
-            // generationUniqueCount
+            // membersByGenerationAndLocation
             // 
             chartArea5.AxisX.Interval = 1D;
             chartArea5.AxisX.IsLabelAutoFit = false;
@@ -674,26 +696,30 @@
             | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.LabelsAngleStep45) 
             | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.WordWrap)));
             chartArea5.AxisX.LabelStyle.Angle = -30;
-            chartArea5.AxisY.IsLogarithmic = true;
-            chartArea5.Name = "ChartArea1";
-            this.generationUniqueCount.ChartAreas.Add(chartArea5);
-            legend5.Enabled = false;
+            chartArea5.AxisX.Minimum = 0D;
+            chartArea5.AxisY.Minimum = 0D;
+            chartArea5.Name = "Members By Location And Generation";
+            this.membersByGenerationAndLocation.ChartAreas.Add(chartArea5);
+            legend5.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
+            legend5.IsDockedInsideChartArea = false;
             legend5.Name = "Legend1";
-            this.generationUniqueCount.Legends.Add(legend5);
-            this.generationUniqueCount.Location = new System.Drawing.Point(1332, 321);
-            this.generationUniqueCount.Name = "generationUniqueCount";
-            series5.ChartArea = "ChartArea1";
+            this.membersByGenerationAndLocation.Legends.Add(legend5);
+            this.membersByGenerationAndLocation.Location = new System.Drawing.Point(8, 933);
+            this.membersByGenerationAndLocation.Name = "membersByGenerationAndLocation";
+            series5.ChartArea = "Members By Location And Generation";
+            series5.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            series5.LabelAngle = 45;
             series5.Legend = "Legend1";
             series5.Name = "Series1";
-            this.generationUniqueCount.Series.Add(series5);
-            this.generationUniqueCount.Size = new System.Drawing.Size(655, 300);
-            this.generationUniqueCount.TabIndex = 4;
-            this.generationUniqueCount.Text = "generationUniqueCount";
-            title5.Name = "Title1";
-            title5.Text = "Generational Uniqueness";
-            this.generationUniqueCount.Titles.Add(title5);
+            this.membersByGenerationAndLocation.Series.Add(series5);
+            this.membersByGenerationAndLocation.Size = new System.Drawing.Size(1318, 616);
+            this.membersByGenerationAndLocation.TabIndex = 7;
+            this.membersByGenerationAndLocation.Text = "chart1";
+            title5.Name = "Members By Location And Generation";
+            title5.Text = "Members By Region And Generation";
+            this.membersByGenerationAndLocation.Titles.Add(title5);
             // 
-            // generationalCompletenessChart
+            // membersByGenerationAndLocationExtended100
             // 
             chartArea6.AxisX.Interval = 1D;
             chartArea6.AxisX.IsLabelAutoFit = false;
@@ -702,29 +728,31 @@
             | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.LabelsAngleStep45) 
             | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.WordWrap)));
             chartArea6.AxisX.LabelStyle.Angle = -30;
+            chartArea6.AxisX.Minimum = 0D;
             chartArea6.AxisY.Maximum = 100D;
             chartArea6.AxisY.Minimum = 0D;
             chartArea6.Name = "ChartArea1";
-            this.generationalCompletenessChart.ChartAreas.Add(chartArea6);
-            legend6.Enabled = false;
+            this.membersByGenerationAndLocationExtended100.ChartAreas.Add(chartArea6);
+            legend6.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
+            legend6.IsDockedInsideChartArea = false;
             legend6.Name = "Legend1";
-            this.generationalCompletenessChart.Legends.Add(legend6);
-            this.generationalCompletenessChart.Location = new System.Drawing.Point(8, 312);
-            this.generationalCompletenessChart.Name = "generationalCompletenessChart";
+            this.membersByGenerationAndLocationExtended100.Legends.Add(legend6);
+            this.membersByGenerationAndLocationExtended100.Location = new System.Drawing.Point(8, 2186);
+            this.membersByGenerationAndLocationExtended100.Name = "membersByGenerationAndLocationExtended100";
             series6.ChartArea = "ChartArea1";
             series6.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             series6.LabelAngle = 45;
             series6.Legend = "Legend1";
             series6.Name = "Series1";
-            this.generationalCompletenessChart.Series.Add(series6);
-            this.generationalCompletenessChart.Size = new System.Drawing.Size(655, 300);
-            this.generationalCompletenessChart.TabIndex = 3;
-            this.generationalCompletenessChart.Text = "generationalCompletenessChart";
-            title6.Name = "Title1";
-            title6.Text = "Generational Completeness";
-            this.generationalCompletenessChart.Titles.Add(title6);
+            this.membersByGenerationAndLocationExtended100.Series.Add(series6);
+            this.membersByGenerationAndLocationExtended100.Size = new System.Drawing.Size(1318, 616);
+            this.membersByGenerationAndLocationExtended100.TabIndex = 6;
+            this.membersByGenerationAndLocationExtended100.Text = "chart1";
+            title6.Name = "Members By Location And Generation (Normalized and Extended)";
+            title6.Text = "Members By Region And Generation (Normalized and Extrapolated)";
+            this.membersByGenerationAndLocationExtended100.Titles.Add(title6);
             // 
-            // memberOccuranceChart
+            // membersByGenerationAndLocation100
             // 
             chartArea7.AxisX.Interval = 1D;
             chartArea7.AxisX.IsLabelAutoFit = false;
@@ -733,25 +761,31 @@
             | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.LabelsAngleStep45) 
             | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.WordWrap)));
             chartArea7.AxisX.LabelStyle.Angle = -30;
-            chartArea7.Name = "ChartArea1";
-            this.memberOccuranceChart.ChartAreas.Add(chartArea7);
-            legend7.Enabled = false;
+            chartArea7.AxisX.Minimum = 0D;
+            chartArea7.AxisY.Maximum = 100D;
+            chartArea7.AxisY.Minimum = 0D;
+            chartArea7.Name = "Members By Location And Generation (Normalized)";
+            this.membersByGenerationAndLocation100.ChartAreas.Add(chartArea7);
+            legend7.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
+            legend7.IsDockedInsideChartArea = false;
             legend7.Name = "Legend1";
-            this.memberOccuranceChart.Legends.Add(legend7);
-            this.memberOccuranceChart.Location = new System.Drawing.Point(671, 321);
-            this.memberOccuranceChart.Name = "memberOccuranceChart";
-            series7.ChartArea = "ChartArea1";
+            this.membersByGenerationAndLocation100.Legends.Add(legend7);
+            this.membersByGenerationAndLocation100.Location = new System.Drawing.Point(8, 1564);
+            this.membersByGenerationAndLocation100.Name = "membersByGenerationAndLocation100";
+            series7.ChartArea = "Members By Location And Generation (Normalized)";
+            series7.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            series7.LabelAngle = 45;
             series7.Legend = "Legend1";
             series7.Name = "Series1";
-            this.memberOccuranceChart.Series.Add(series7);
-            this.memberOccuranceChart.Size = new System.Drawing.Size(655, 300);
-            this.memberOccuranceChart.TabIndex = 2;
-            this.memberOccuranceChart.Text = "memberOccuranceChart";
-            title7.Name = "Title1";
-            title7.Text = "Generational Duplicity";
-            this.memberOccuranceChart.Titles.Add(title7);
+            this.membersByGenerationAndLocation100.Series.Add(series7);
+            this.membersByGenerationAndLocation100.Size = new System.Drawing.Size(1318, 616);
+            this.membersByGenerationAndLocation100.TabIndex = 5;
+            this.membersByGenerationAndLocation100.Text = "chart1";
+            title7.Name = "Members By Location And Generation (Normalized)";
+            title7.Text = "Members By Region And Generation (Normalized to Generation Size)";
+            this.membersByGenerationAndLocation100.Titles.Add(title7);
             // 
-            // countryOccuranceChart
+            // generationUniqueCount
             // 
             chartArea8.AxisX.Interval = 1D;
             chartArea8.AxisX.IsLabelAutoFit = false;
@@ -760,25 +794,26 @@
             | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.LabelsAngleStep45) 
             | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.WordWrap)));
             chartArea8.AxisX.LabelStyle.Angle = -30;
+            chartArea8.AxisY.IsLogarithmic = true;
             chartArea8.Name = "ChartArea1";
-            this.countryOccuranceChart.ChartAreas.Add(chartArea8);
+            this.generationUniqueCount.ChartAreas.Add(chartArea8);
             legend8.Enabled = false;
             legend8.Name = "Legend1";
-            this.countryOccuranceChart.Legends.Add(legend8);
-            this.countryOccuranceChart.Location = new System.Drawing.Point(671, 6);
-            this.countryOccuranceChart.Name = "countryOccuranceChart";
+            this.generationUniqueCount.Legends.Add(legend8);
+            this.generationUniqueCount.Location = new System.Drawing.Point(1332, 321);
+            this.generationUniqueCount.Name = "generationUniqueCount";
             series8.ChartArea = "ChartArea1";
             series8.Legend = "Legend1";
             series8.Name = "Series1";
-            this.countryOccuranceChart.Series.Add(series8);
-            this.countryOccuranceChart.Size = new System.Drawing.Size(655, 300);
-            this.countryOccuranceChart.TabIndex = 1;
-            this.countryOccuranceChart.Text = "countryOccuranceChart";
+            this.generationUniqueCount.Series.Add(series8);
+            this.generationUniqueCount.Size = new System.Drawing.Size(655, 300);
+            this.generationUniqueCount.TabIndex = 4;
+            this.generationUniqueCount.Text = "generationUniqueCount";
             title8.Name = "Title1";
-            title8.Text = "Top 10 Regions";
-            this.countryOccuranceChart.Titles.Add(title8);
+            title8.Text = "Generational Uniqueness";
+            this.generationUniqueCount.Titles.Add(title8);
             // 
-            // occuranceChart
+            // generationalCompletenessChart
             // 
             chartArea9.AxisX.Interval = 1D;
             chartArea9.AxisX.IsLabelAutoFit = false;
@@ -787,23 +822,108 @@
             | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.LabelsAngleStep45) 
             | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.WordWrap)));
             chartArea9.AxisX.LabelStyle.Angle = -30;
+            chartArea9.AxisY.Maximum = 100D;
+            chartArea9.AxisY.Minimum = 0D;
             chartArea9.Name = "ChartArea1";
-            this.occuranceChart.ChartAreas.Add(chartArea9);
+            this.generationalCompletenessChart.ChartAreas.Add(chartArea9);
             legend9.Enabled = false;
             legend9.Name = "Legend1";
-            this.occuranceChart.Legends.Add(legend9);
-            this.occuranceChart.Location = new System.Drawing.Point(8, 6);
-            this.occuranceChart.Name = "occuranceChart";
+            this.generationalCompletenessChart.Legends.Add(legend9);
+            this.generationalCompletenessChart.Location = new System.Drawing.Point(8, 312);
+            this.generationalCompletenessChart.Name = "generationalCompletenessChart";
             series9.ChartArea = "ChartArea1";
+            series9.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            series9.LabelAngle = 45;
             series9.Legend = "Legend1";
             series9.Name = "Series1";
-            this.occuranceChart.Series.Add(series9);
+            this.generationalCompletenessChart.Series.Add(series9);
+            this.generationalCompletenessChart.Size = new System.Drawing.Size(655, 300);
+            this.generationalCompletenessChart.TabIndex = 3;
+            this.generationalCompletenessChart.Text = "generationalCompletenessChart";
+            title9.Name = "Title1";
+            title9.Text = "Generational Completeness";
+            this.generationalCompletenessChart.Titles.Add(title9);
+            // 
+            // memberOccuranceChart
+            // 
+            chartArea10.AxisX.Interval = 1D;
+            chartArea10.AxisX.IsLabelAutoFit = false;
+            chartArea10.AxisX.LabelAutoFitStyle = ((System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles)(((((System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.IncreaseFont | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.DecreaseFont) 
+            | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.LabelsAngleStep30) 
+            | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.LabelsAngleStep45) 
+            | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.WordWrap)));
+            chartArea10.AxisX.LabelStyle.Angle = -30;
+            chartArea10.Name = "ChartArea1";
+            this.memberOccuranceChart.ChartAreas.Add(chartArea10);
+            legend10.Enabled = false;
+            legend10.Name = "Legend1";
+            this.memberOccuranceChart.Legends.Add(legend10);
+            this.memberOccuranceChart.Location = new System.Drawing.Point(671, 321);
+            this.memberOccuranceChart.Name = "memberOccuranceChart";
+            series10.ChartArea = "ChartArea1";
+            series10.Legend = "Legend1";
+            series10.Name = "Series1";
+            this.memberOccuranceChart.Series.Add(series10);
+            this.memberOccuranceChart.Size = new System.Drawing.Size(655, 300);
+            this.memberOccuranceChart.TabIndex = 2;
+            this.memberOccuranceChart.Text = "memberOccuranceChart";
+            title10.Name = "Title1";
+            title10.Text = "Generational Duplicity";
+            this.memberOccuranceChart.Titles.Add(title10);
+            // 
+            // countryOccuranceChart
+            // 
+            chartArea11.AxisX.Interval = 1D;
+            chartArea11.AxisX.IsLabelAutoFit = false;
+            chartArea11.AxisX.LabelAutoFitStyle = ((System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles)(((((System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.IncreaseFont | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.DecreaseFont) 
+            | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.LabelsAngleStep30) 
+            | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.LabelsAngleStep45) 
+            | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.WordWrap)));
+            chartArea11.AxisX.LabelStyle.Angle = -30;
+            chartArea11.Name = "ChartArea1";
+            this.countryOccuranceChart.ChartAreas.Add(chartArea11);
+            legend11.Enabled = false;
+            legend11.Name = "Legend1";
+            this.countryOccuranceChart.Legends.Add(legend11);
+            this.countryOccuranceChart.Location = new System.Drawing.Point(671, 6);
+            this.countryOccuranceChart.Name = "countryOccuranceChart";
+            series11.ChartArea = "ChartArea1";
+            series11.Legend = "Legend1";
+            series11.Name = "Series1";
+            this.countryOccuranceChart.Series.Add(series11);
+            this.countryOccuranceChart.Size = new System.Drawing.Size(655, 300);
+            this.countryOccuranceChart.TabIndex = 1;
+            this.countryOccuranceChart.Text = "countryOccuranceChart";
+            title11.Name = "Title1";
+            title11.Text = "Top 10 Regions";
+            this.countryOccuranceChart.Titles.Add(title11);
+            // 
+            // occuranceChart
+            // 
+            chartArea12.AxisX.Interval = 1D;
+            chartArea12.AxisX.IsLabelAutoFit = false;
+            chartArea12.AxisX.LabelAutoFitStyle = ((System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles)(((((System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.IncreaseFont | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.DecreaseFont) 
+            | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.LabelsAngleStep30) 
+            | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.LabelsAngleStep45) 
+            | System.Windows.Forms.DataVisualization.Charting.LabelAutoFitStyles.WordWrap)));
+            chartArea12.AxisX.LabelStyle.Angle = -30;
+            chartArea12.Name = "ChartArea1";
+            this.occuranceChart.ChartAreas.Add(chartArea12);
+            legend12.Enabled = false;
+            legend12.Name = "Legend1";
+            this.occuranceChart.Legends.Add(legend12);
+            this.occuranceChart.Location = new System.Drawing.Point(8, 6);
+            this.occuranceChart.Name = "occuranceChart";
+            series12.ChartArea = "ChartArea1";
+            series12.Legend = "Legend1";
+            series12.Name = "Series1";
+            this.occuranceChart.Series.Add(series12);
             this.occuranceChart.Size = new System.Drawing.Size(655, 300);
             this.occuranceChart.TabIndex = 0;
             this.occuranceChart.Text = "namesChart";
-            title9.Name = "Title1";
-            title9.Text = "Top 10 Family Names";
-            this.occuranceChart.Titles.Add(title9);
+            title12.Name = "Title1";
+            title12.Text = "Top 10 Family Names";
+            this.occuranceChart.Titles.Add(title12);
             // 
             // searchPage
             // 
@@ -811,7 +931,7 @@
             this.searchPage.Location = new System.Drawing.Point(4, 25);
             this.searchPage.Margin = new System.Windows.Forms.Padding(0);
             this.searchPage.Name = "searchPage";
-            this.searchPage.Size = new System.Drawing.Size(1320, 713);
+            this.searchPage.Size = new System.Drawing.Size(1440, 726);
             this.searchPage.TabIndex = 3;
             this.searchPage.Text = "Search";
             this.searchPage.UseVisualStyleBackColor = true;
@@ -831,8 +951,8 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 713F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1320, 713);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 726F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1440, 726);
             this.tableLayoutPanel1.TabIndex = 5;
             // 
             // searchResults
@@ -844,12 +964,14 @@
             this.searchResults.Location = new System.Drawing.Point(280, 0);
             this.searchResults.Margin = new System.Windows.Forms.Padding(0);
             this.searchResults.Name = "searchResults";
-            this.searchResults.Size = new System.Drawing.Size(300, 713);
+            this.searchResults.Size = new System.Drawing.Size(300, 726);
             this.searchResults.TabIndex = 2;
             this.searchResults.SelectedIndexChanged += new System.EventHandler(this.searchResults_SelectedIndexChanged);
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.birthRegionSearch);
+            this.panel1.Controls.Add(this.label17);
             this.panel1.Controls.Add(this.label13);
             this.panel1.Controls.Add(this.nameLastSearch);
             this.panel1.Controls.Add(this.label12);
@@ -871,14 +993,34 @@
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(280, 713);
+            this.panel1.Size = new System.Drawing.Size(280, 726);
             this.panel1.TabIndex = 0;
+            // 
+            // birthRegionSearch
+            // 
+            this.birthRegionSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.birthRegionSearch.Location = new System.Drawing.Point(6, 261);
+            this.birthRegionSearch.Name = "birthRegionSearch";
+            this.birthRegionSearch.Size = new System.Drawing.Size(231, 26);
+            this.birthRegionSearch.TabIndex = 5;
+            this.birthRegionSearch.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.birthRegionSearch.TextChanged += new System.EventHandler(this.textUpdateSearch);
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.label17.Location = new System.Drawing.Point(6, 238);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(165, 20);
+            this.label17.TabIndex = 18;
+            this.label17.Text = "Search Birth Region:";
             // 
             // label13
             // 
             this.label13.AutoSize = true;
             this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label13.Location = new System.Drawing.Point(109, 258);
+            this.label13.Location = new System.Drawing.Point(109, 331);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(28, 20);
             this.label13.TabIndex = 17;
@@ -892,7 +1034,7 @@
             this.nameLastSearch.Size = new System.Drawing.Size(181, 26);
             this.nameLastSearch.TabIndex = 1;
             this.nameLastSearch.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.nameLastSearch.KeyUp += new System.Windows.Forms.KeyEventHandler(this.keyUpdateSearch);
+            this.nameLastSearch.TextChanged += new System.EventHandler(this.textUpdateSearch);
             // 
             // label12
             // 
@@ -912,7 +1054,7 @@
             this.nameFirstSearch.Size = new System.Drawing.Size(181, 26);
             this.nameFirstSearch.TabIndex = 0;
             this.nameFirstSearch.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.nameFirstSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.keyUpdateSearch);
+            this.nameFirstSearch.TextChanged += new System.EventHandler(this.textUpdateSearch);
             // 
             // label11
             // 
@@ -958,7 +1100,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label7.Location = new System.Drawing.Point(10, 232);
+            this.label7.Location = new System.Drawing.Point(10, 305);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(209, 20);
             this.label7.TabIndex = 7;
@@ -967,38 +1109,38 @@
             // deathDateEndSearch
             // 
             this.deathDateEndSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.deathDateEndSearch.Location = new System.Drawing.Point(143, 255);
+            this.deathDateEndSearch.Location = new System.Drawing.Point(143, 328);
             this.deathDateEndSearch.Mask = "0000";
             this.deathDateEndSearch.Name = "deathDateEndSearch";
             this.deathDateEndSearch.Size = new System.Drawing.Size(48, 26);
-            this.deathDateEndSearch.TabIndex = 6;
-            this.deathDateEndSearch.KeyUp += new System.Windows.Forms.KeyEventHandler(this.keyUpdateSearch);
+            this.deathDateEndSearch.TabIndex = 7;
+            this.deathDateEndSearch.TextChanged += new System.EventHandler(this.textUpdateSearch);
             // 
             // birthLocationSearch
             // 
             this.birthLocationSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.birthLocationSearch.Location = new System.Drawing.Point(6, 192);
+            this.birthLocationSearch.Location = new System.Drawing.Point(6, 196);
             this.birthLocationSearch.Name = "birthLocationSearch";
             this.birthLocationSearch.Size = new System.Drawing.Size(231, 26);
             this.birthLocationSearch.TabIndex = 4;
             this.birthLocationSearch.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.birthLocationSearch.KeyUp += new System.Windows.Forms.KeyEventHandler(this.keyUpdateSearch);
+            this.birthLocationSearch.TextChanged += new System.EventHandler(this.textUpdateSearch);
             // 
             // deathDateStartSearch
             // 
             this.deathDateStartSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.deathDateStartSearch.Location = new System.Drawing.Point(55, 255);
+            this.deathDateStartSearch.Location = new System.Drawing.Point(55, 328);
             this.deathDateStartSearch.Mask = "0000";
             this.deathDateStartSearch.Name = "deathDateStartSearch";
             this.deathDateStartSearch.Size = new System.Drawing.Size(48, 26);
-            this.deathDateStartSearch.TabIndex = 5;
-            this.deathDateStartSearch.KeyUp += new System.Windows.Forms.KeyEventHandler(this.keyUpdateSearch);
+            this.deathDateStartSearch.TabIndex = 6;
+            this.deathDateStartSearch.TextChanged += new System.EventHandler(this.textUpdateSearch);
             // 
             // label8
             // 
             this.label8.AutoSize = true;
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label8.Location = new System.Drawing.Point(6, 169);
+            this.label8.Location = new System.Drawing.Point(6, 173);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(177, 20);
             this.label8.TabIndex = 10;
@@ -1012,13 +1154,13 @@
             this.birthDateEndSearch.Name = "birthDateEndSearch";
             this.birthDateEndSearch.Size = new System.Drawing.Size(48, 26);
             this.birthDateEndSearch.TabIndex = 3;
-            this.birthDateEndSearch.KeyUp += new System.Windows.Forms.KeyEventHandler(this.keyUpdateSearch);
+            this.birthDateEndSearch.TextChanged += new System.EventHandler(this.textUpdateSearch);
             // 
             // label9
             // 
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.label9.Location = new System.Drawing.Point(6, 284);
+            this.label9.Location = new System.Drawing.Point(6, 361);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(186, 20);
             this.label9.TabIndex = 12;
@@ -1032,17 +1174,17 @@
             this.birthDateStartSearch.Name = "birthDateStartSearch";
             this.birthDateStartSearch.Size = new System.Drawing.Size(48, 26);
             this.birthDateStartSearch.TabIndex = 2;
-            this.birthDateStartSearch.KeyUp += new System.Windows.Forms.KeyEventHandler(this.keyUpdateSearch);
+            this.birthDateStartSearch.TextChanged += new System.EventHandler(this.textUpdateSearch);
             // 
             // deathLocationSearch
             // 
             this.deathLocationSearch.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.deathLocationSearch.Location = new System.Drawing.Point(6, 307);
+            this.deathLocationSearch.Location = new System.Drawing.Point(6, 384);
             this.deathLocationSearch.Name = "deathLocationSearch";
             this.deathLocationSearch.Size = new System.Drawing.Size(231, 26);
-            this.deathLocationSearch.TabIndex = 7;
+            this.deathLocationSearch.TabIndex = 8;
             this.deathLocationSearch.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.deathLocationSearch.KeyUp += new System.Windows.Forms.KeyEventHandler(this.keyUpdateSearch);
+            this.deathLocationSearch.TextChanged += new System.EventHandler(this.textUpdateSearch);
             // 
             // panel2
             // 
@@ -1050,7 +1192,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(583, 3);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(736, 707);
+            this.panel2.Size = new System.Drawing.Size(854, 720);
             this.panel2.TabIndex = 3;
             // 
             // splitContainer1
@@ -1074,8 +1216,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.searchMiscInfoBox);
-            this.splitContainer1.Size = new System.Drawing.Size(736, 707);
-            this.splitContainer1.SplitterDistance = 250;
+            this.splitContainer1.Size = new System.Drawing.Size(854, 720);
+            this.splitContainer1.SplitterDistance = 289;
             this.splitContainer1.TabIndex = 17;
             // 
             // lblSetAsRoot
@@ -1189,7 +1331,7 @@
             this.searchMiscInfoBox.ItemHeight = 25;
             this.searchMiscInfoBox.Location = new System.Drawing.Point(0, 0);
             this.searchMiscInfoBox.Name = "searchMiscInfoBox";
-            this.searchMiscInfoBox.Size = new System.Drawing.Size(482, 707);
+            this.searchMiscInfoBox.Size = new System.Drawing.Size(561, 720);
             this.searchMiscInfoBox.TabIndex = 0;
             // 
             // optionsPage
@@ -1201,7 +1343,7 @@
             this.optionsPage.Location = new System.Drawing.Point(4, 25);
             this.optionsPage.Name = "optionsPage";
             this.optionsPage.Padding = new System.Windows.Forms.Padding(3);
-            this.optionsPage.Size = new System.Drawing.Size(1320, 713);
+            this.optionsPage.Size = new System.Drawing.Size(1440, 726);
             this.optionsPage.TabIndex = 4;
             this.optionsPage.Text = "Options";
             this.optionsPage.UseVisualStyleBackColor = true;
@@ -1259,7 +1401,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1328, 742);
+            this.ClientSize = new System.Drawing.Size(1448, 755);
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "AppMain";
@@ -1270,11 +1412,15 @@
             this.treePage.ResumeLayout(false);
             this.infoPanel.ResumeLayout(false);
             this.infoPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.minimap)).EndInit();
             this.mapPage.ResumeLayout(false);
             this.pnlMarkerInfo.ResumeLayout(false);
             this.pnlMarkerInfo.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.yearRange)).EndInit();
             this.statsPage.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.averageMemberAge)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.memberOccuranceChart2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.generationAverageYearChart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.countryOccuranceChartExtended)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.membersByGenerationAndLocation)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.membersByGenerationAndLocationExtended100)).EndInit();
@@ -1381,6 +1527,12 @@
         private System.Windows.Forms.OpenFileDialog dataFileSelect;
         private System.Windows.Forms.Button btnExportCurrent;
         private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.DataVisualization.Charting.Chart generationAverageYearChart;
+        private System.Windows.Forms.DataVisualization.Charting.Chart memberOccuranceChart2;
+        private System.Windows.Forms.DataVisualization.Charting.Chart averageMemberAge;
+        private System.Windows.Forms.TextBox birthRegionSearch;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.PictureBox minimap;
     }
 }
 

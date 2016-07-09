@@ -14,8 +14,13 @@ namespace Geneal
 
         public String Name { get; set; }
         public String FamilyName { get { return this.Name.Split(',').First().Trim().ToUpper(); } }
+        public String FirstName { get { return this.Name.Split(',').Last().Trim().ToUpper(); } }
 
         public DateTime BirthDate { get; set; }
+        public int BirthDecade { get { return (int)Math.Round(this.BirthDate.Year / 10.0) * 10; } }
+        public int BirthBidecade { get { return (int)Math.Round(this.BirthDate.Year / 20.0) * 20; } }
+        public int BirthSemicentury { get { return (int)Math.Round(this.BirthDate.Year / 50.0) * 50; } }
+        public int BirthCentury { get { return (int)Math.Round(this.BirthDate.Year / 100.0) * 100; } }
 
         public String BirthLocation { get; set; }
         public String BirthRegion { get; set; }
@@ -31,14 +36,14 @@ namespace Geneal
         public String Parent2 { get; set; }
 
         public Dictionary<String, String> MiscInfo { get; set; }
-
-        public int Generation { get; set; }
-
-        public int GenerationIndex { get; set; }
+        
+        public List<Generation> Generations { get; set; }
 
         #endregion
 
-        public Member() { }
+        public Member() {
+            this.Generations = new List<Generation>();
+        }
         
         public String getMisc(string key)
         {
@@ -53,5 +58,12 @@ namespace Geneal
         {
             return (Member)this.MemberwiseClone();
         }
+    }
+
+    [Serializable]
+    public class Generation
+    {
+        public int Depth { get; set; }
+        public int Breadth { get; set; }
     }
 }
