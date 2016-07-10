@@ -46,9 +46,17 @@ namespace Geneal
             assignGenerations();
         }
 
-        public void ExportCurrentFamily()
+        public void ExportCurrentFamily(string exportType)
         {
-            this._ds.WriteCurrentToDataFile();
+            switch(exportType.ToUpper())
+            {
+                case "GEDCOM":
+                    this._ds.ExportToPlainText(new DataConverter(_family).ToGEDCOM());
+                    break;
+                default:
+                    this._ds.WriteCurrentToDataFile();
+                    break;
+            }
         }
 
         public void LoadFamilyFromFile(string filepath)

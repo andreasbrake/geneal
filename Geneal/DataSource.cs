@@ -62,6 +62,11 @@ namespace Geneal
                 bformatter.Serialize(stream, _members);
             }
         }
+        public void ExportToPlainText(string data)
+        {
+            File.WriteAllText("dataExport.ged", data, Encoding.Unicode);
+        }
+
         public void WriteCurrentToDataFile()
         {
             List<Member> current = (from m in _members

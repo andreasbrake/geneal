@@ -200,7 +200,7 @@ namespace Geneal
 
                     if (MAX_RECT_HEIGHT < containerHeight)
                     {
-                        memberItem.Text = parseName(nodes[i][j].Name);
+                        memberItem.Text = nodes[i][j].CleanName;
                         memberItem.TextAlign = ContentAlignment.MiddleCenter;
                         memberItem.Font = new Font(Preferences.TreeFontName, Preferences.TreeFontSize, FontStyle.Regular);
                     }
@@ -235,7 +235,7 @@ namespace Geneal
                 return;
             }
 
-            lblMemerName.Text = "Name: " + parseName(memInfo.Name);
+            lblMemerName.Text = "Name: " + memInfo.CleanName;
 
             lblMemberPosition.Text = "Position: ";
 
@@ -297,7 +297,7 @@ namespace Geneal
                 return;
             }
 
-            lblMarkerName.Text = "Name: " + parseName(mem.Name);
+            lblMarkerName.Text = "Name: " + mem.CleanName;
             lblMarkerBirthDate.Text = "Birth Date: " + parseDate(mem.BirthDate);
             lblMarkerBirthPlace.Text = "Birth Place: " + parseLocation(mem.BirthLocation);
             lblMarkerDeathDate.Text = "Death Date: " + parseDate(mem.DeathDate);
@@ -313,7 +313,7 @@ namespace Geneal
                 return;
             }
 
-            lblSearchMemberName.Text = "Name: " + parseName(mem.Name);
+            lblSearchMemberName.Text = "Name: " + mem.CleanName;
             
             lblSearchMemberBirthDate.Text = "Birth Date: " + parseDate(mem.BirthDate);
             lblSearchMemberBirthPlace.Text = "Birth Place: " + parseLocation(mem.BirthLocation);
@@ -339,24 +339,24 @@ namespace Geneal
             searchMiscInfoBox.Items.AddRange(miscItems.ToArray());
         }
 
-        private string parseName(string name)
-        {
-            string[] nameParts = name.Split(',');
+        //private string parseName(string name)
+        //{
+        //    string[] nameParts = name.Split(',');
 
-            string firstName = nameParts[1].Substring(0, 1).ToUpper() + nameParts[1].Substring(1);
-            string lastName = nameParts[0].Substring(0, 1).ToUpper() + nameParts[0].Substring(1);
+        //    string firstName = nameParts[1].Substring(0, 1).ToUpper() + nameParts[1].Substring(1);
+        //    string lastName = nameParts[0].Substring(0, 1).ToUpper() + nameParts[0].Substring(1);
 
-            firstName = char.ToUpper(firstName[0]) + firstName.Substring(1);
+        //    firstName = char.ToUpper(firstName[0]) + firstName.Substring(1);
 
-            Match irishMatch = Regex.Match(lastName, @"(mc|mac|O')([^\s]+)");
-            if(irishMatch.Success)
-            {
-                string parsedName = char.ToUpper(irishMatch.Groups[1].Value[0]) + irishMatch.Groups[1].Value.Substring(1) + char.ToUpper(irishMatch.Groups[2].Value[0]) + irishMatch.Groups[2].Value.Substring(1);
-                lastName = lastName.Replace(irishMatch.Value, parsedName);
-            }
+        //    Match irishMatch = Regex.Match(lastName, @"(mc|mac|O')([^\s]+)");
+        //    if(irishMatch.Success)
+        //    {
+        //        string parsedName = char.ToUpper(irishMatch.Groups[1].Value[0]) + irishMatch.Groups[1].Value.Substring(1) + char.ToUpper(irishMatch.Groups[2].Value[0]) + irishMatch.Groups[2].Value.Substring(1);
+        //        lastName = lastName.Replace(irishMatch.Value, parsedName);
+        //    }
 
-            return firstName + " " + lastName;
-        }
+        //    return firstName + " " + lastName;
+        //}
         private string parseDate(DateTime date)
         {
             if(date.Year == 1)
@@ -595,7 +595,12 @@ namespace Geneal
 
         private void btnExportCurrent_Click(object sender, EventArgs e)
         {            
-            _family.ExportCurrentFamily();
+            _family.ExportCurrentFamily("BIN");
+        }
+
+        private void exportGEDCOM_Click(object sender, EventArgs e)
+        {
+            _family.ExportCurrentFamily("GEDCOM");
         }
     }
 }

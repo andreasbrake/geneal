@@ -163,6 +163,8 @@
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.dataFileSelect = new System.Windows.Forms.OpenFileDialog();
+            this.exportGEDCOM = new System.Windows.Forms.Button();
+            this.label18 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.treePage.SuspendLayout();
             this.infoPanel.SuspendLayout();
@@ -1336,6 +1338,8 @@
             // 
             // optionsPage
             // 
+            this.optionsPage.Controls.Add(this.exportGEDCOM);
+            this.optionsPage.Controls.Add(this.label18);
             this.optionsPage.Controls.Add(this.btnExportCurrent);
             this.optionsPage.Controls.Add(this.label16);
             this.optionsPage.Controls.Add(this.label14);
@@ -1350,7 +1354,7 @@
             // 
             // btnExportCurrent
             // 
-            this.btnExportCurrent.Location = new System.Drawing.Point(164, 62);
+            this.btnExportCurrent.Location = new System.Drawing.Point(190, 62);
             this.btnExportCurrent.Name = "btnExportCurrent";
             this.btnExportCurrent.Size = new System.Drawing.Size(90, 27);
             this.btnExportCurrent.TabIndex = 3;
@@ -1363,9 +1367,9 @@
             this.label16.AutoSize = true;
             this.label16.Location = new System.Drawing.Point(15, 67);
             this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(143, 17);
+            this.label16.Size = new System.Drawing.Size(169, 17);
             this.label16.TabIndex = 2;
-            this.label16.Text = "Export Current Family";
+            this.label16.Text = "Export Current Family BIN";
             // 
             // label14
             // 
@@ -1396,6 +1400,25 @@
             // 
             this.dataFileSelect.FileName = "DataFile";
             this.dataFileSelect.FileOk += new System.ComponentModel.CancelEventHandler(this.dataFileSelect_FileOk);
+            // 
+            // exportGEDCOM
+            // 
+            this.exportGEDCOM.Location = new System.Drawing.Point(229, 109);
+            this.exportGEDCOM.Name = "exportGEDCOM";
+            this.exportGEDCOM.Size = new System.Drawing.Size(90, 27);
+            this.exportGEDCOM.TabIndex = 5;
+            this.exportGEDCOM.Text = "Export";
+            this.exportGEDCOM.UseVisualStyleBackColor = true;
+            this.exportGEDCOM.Click += new System.EventHandler(this.exportGEDCOM_Click);
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(15, 115);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(208, 17);
+            this.label18.TabIndex = 4;
+            this.label18.Text = "Export Current Family GEDCOM";
             // 
             // AppMain
             // 
@@ -1533,6 +1556,8 @@
         private System.Windows.Forms.TextBox birthRegionSearch;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.PictureBox minimap;
+        private System.Windows.Forms.Button exportGEDCOM;
+        private System.Windows.Forms.Label label18;
     }
 }
 

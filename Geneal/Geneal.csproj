@@ -77,6 +77,7 @@
     <Compile Include="AppMain.Designer.cs">
       <DependentUpon>AppMain.cs</DependentUpon>
     </Compile>
+    <Compile Include="DataConverter.cs" />
     <Compile Include="DataSource.cs" />
     <Compile Include="FamilyMembers.cs" />
     <Compile Include="FamilyStats.cs" />
